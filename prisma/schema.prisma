@@ -1,0 +1,191 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
+}
+
+// Enable TLS for TiDB Cloud connections
+
+model User {
+  id        String   @id @default(cuid())
+  name      String?
+  email     String?  @unique
+  image     String?
+  createdAt DateTime @default(now())
+  ratings   Rating[]
+  comments  Comment[]
+  favorites Favorite[]
+  requests  Request[]
+}
+
+model Game {
+  id                String         @id @default(cuid())
+  title             String
+  slug              String         @unique
+  description       String?        @db.Text
+  platform          String
+  genre             String?
+  releaseYear       Int?
+  developer         String?
+  publisher         String?
+  coverImage        String?
+  screenshots       Json?
+  fileSize          String?
+  systemRequirements Json?
+  rating            Decimal        @default(0) @db.Decimal(3, 2)
+  totalRatings      Int            @default(0)
+  status            GameStatus     @default(pending)
+  source            String?
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+  downloadLinks     DownloadLink[]
+  collections       GameCollection[]
+  ratings           Rating[]
+  comments          Comment[]
+  manuals           Manual[]
+  favorites         Favorite[]
+  requests          Request[]
+
+  @@index([platform])
+  @@index([genre])
+  @@index([releaseYear])
+  @@index([status])
+}
+
+model DownloadLink {
+  id        String     @id @default(cuid())
+  gameId    String
+  linkType  LinkType
+  url       String     @db.Text
+  host      String?
+  fileSize  String?
+  isActive  Boolean    @default(true)
+  createdAt DateTime   @default(now())
+  game      Game       @relation(fields: [gameId], references: [id], onDelete: Cascade)
+
+  @@index([gameId])
+}
+
+model Collection {
+  id          String          @id @default(cuid())
+  name        String
+  slug        String          @unique
+  description String?         @db.Text
+  coverImage  String?
+  games       GameCollection[]
+}
+
+model GameCollection {
+  gameId       String
+  collectionId String
+  game         Game       @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  collection   Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+
+  @@id([gameId, collectionId])
+}
+
+model Rating {
+  id        String   @id @default(cuid())
+  gameId    String
+  userId    String
+  score     Int      @db.TinyInt
+  createdAt DateTime @default(now())
+  game      Game     @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([gameId, userId])
+  @@index([gameId])
+}
+
+model Comment {
+  id        String    @id @default(cuid())
+  gameId    String
+  userId    String
+  content   String    @db.Text
+  parentId  String?
+  createdAt DateTime  @default(now())
+  game      Game      @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([gameId])
+}
+
+model Manual {
+  id        String   @id @default(cuid())
+  gameId    String
+  title     String
+  fileUrl   String   @db.Text
+  pageCount Int?
+  language  String?
+  createdAt DateTime @default(now())
+  game      Game     @relation(fields: [gameId], references: [id], onDelete: Cascade)
+
+  @@index([gameId])
+}
+
+model Favorite {
+  userId    String
+  gameId    String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  game      Game     @relation(fields: [gameId], references: [id], onDelete: Cascade)
+
+  @@id([userId, gameId])
+}
+
+model Request {
+  id        String      @id @default(cuid())
+  title     String
+  platform  String?
+  description String?   @db.Text
+  userId    String?
+  status    RequestStatus @default(pending)
+  votes     Int         @default(0)
+  createdAt DateTime    @default(now())
+  user      User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
+  game      Game?       @relation(fields: [gameId], references: [id], onDelete: SetNull)
+  gameId    String?
+
+  @@index([status])
+}
+
+model ScrapingQueue {
+  id              String   @id @default(cuid())
+  source          String
+  url             String   @db.Text
+  status          ScrapingStatus @default(pending)
+  suggestedData   Json?
+  createdAt       DateTime @default(now())
+  processedAt     DateTime?
+
+  @@index([status])
+}
+
+enum GameStatus {
+  active
+  pending
+  removed
+}
+
+enum LinkType {
+  direct
+  torrent
+  mirror
+}
+
+enum RequestStatus {
+  pending
+  fulfilled
+  rejected
+}
+
+enum ScrapingStatus {
+  pending
+  processing
+  approved
+  rejected
+}
