@@ -2,11 +2,16 @@ import { db } from "@/lib/db";
 import { ClipboardList, Plus, ArrowUp } from "lucide-react";
 
 async function getRequests() {
-  const requests = await db.request.findMany({
-    orderBy: [{ votes: "desc" }, { createdAt: "desc" }],
-  });
+  try {
+    const requests = await db.request.findMany({
+      orderBy: [{ votes: "desc" }, { createdAt: "desc" }],
+    });
 
-  return requests;
+    return requests;
+  } catch (error) {
+    console.error("Database error:", error);
+    return [];
+  }
 }
 
 export default async function RequestsPage() {

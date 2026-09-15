@@ -10,16 +10,21 @@ import {
 import Link from "next/link";
 
 async function getStats() {
-  const [games, collections, manuals, requests, pendingScraping] =
-    await Promise.all([
-      db.game.count({ where: { status: "active" } }),
-      db.collection.count(),
-      db.manual.count(),
-      db.request.count(),
-      db.scrapingQueue.count({ where: { status: "pending" } }),
-    ]);
+  try {
+    const [games, collections, manuals, requests, pendingScraping] =
+      await Promise.all([
+        db.game.count({ where: { status: "active" } }),
+        db.collection.count(),
+        db.manual.count(),
+        db.request.count(),
+        db.scrapingQueue.count({ where: { status: "pending" } }),
+      ]);
 
-  return { games, collections, manuals, requests, pendingScraping };
+    return { games, collections, manuals, requests, pendingScraping };
+  } catch (error) {
+    console.error("Database error:", error);
+    return { games: 0, collections: 0, manuals: 0, requests: 0, pendingScraping: 0 };
+  }
 }
 
 export default async function AdminPage() {

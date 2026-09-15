@@ -20,85 +20,95 @@ async function getGames(searchParams: {
   genre?: string;
   sort?: string;
 }) {
-  const { search, platform, genre, sort } = searchParams;
+  try {
+    const { search, platform, genre, sort } = searchParams;
 
-  const where: Record<string, unknown> = {
-    status: "active",
-  };
+    const where: Record<string, unknown> = {
+      status: "active",
+    };
 
-  if (search) {
-    where.OR = [
-      { title: { contains: search } },
-      { description: { contains: search } },
-    ];
+    if (search) {
+      where.OR = [
+        { title: { contains: search } },
+        { description: { contains: search } },
+      ];
+    }
+
+    if (platform) {
+      where.platform = platform;
+    }
+
+    if (genre) {
+      where.genre = genre;
+    }
+
+    let orderBy: Record<string, string> = {};
+    switch (sort) {
+      case "oldest":
+        orderBy = { releaseYear: "asc" };
+        break;
+      case "rating":
+        orderBy = { rating: "desc" };
+        break;
+      case "title":
+        orderBy = { title: "asc" };
+        break;
+      default:
+        orderBy = { createdAt: "desc" };
+    }
+
+    const games = await db.game.findMany({
+      where,
+      orderBy,
+      select: {
+        id: true,
+        title: true,
+        slug: true,
+        platform: true,
+        coverImage: true,
+        rating: true,
+        fileSize: true,
+        releaseYear: true,
+      },
+    });
+
+    return games.map((g) => ({
+      ...g,
+      rating: Number(g.rating),
+      coverImage: g.coverImage ?? undefined,
+      fileSize: g.fileSize ?? undefined,
+      releaseYear: g.releaseYear ?? undefined,
+    })) as Game[];
+  } catch (error) {
+    console.error("Database error:", error);
+    return [];
   }
-
-  if (platform) {
-    where.platform = platform;
-  }
-
-  if (genre) {
-    where.genre = genre;
-  }
-
-  let orderBy: Record<string, string> = {};
-  switch (sort) {
-    case "oldest":
-      orderBy = { releaseYear: "asc" };
-      break;
-    case "rating":
-      orderBy = { rating: "desc" };
-      break;
-    case "title":
-      orderBy = { title: "asc" };
-      break;
-    default:
-      orderBy = { createdAt: "desc" };
-  }
-
-  const games = await db.game.findMany({
-    where,
-    orderBy,
-    select: {
-      id: true,
-      title: true,
-      slug: true,
-      platform: true,
-      coverImage: true,
-      rating: true,
-      fileSize: true,
-      releaseYear: true,
-    },
-  });
-
-  return games.map((g) => ({
-    ...g,
-    rating: Number(g.rating),
-    coverImage: g.coverImage ?? undefined,
-    fileSize: g.fileSize ?? undefined,
-    releaseYear: g.releaseYear ?? undefined,
-  })) as Game[];
 }
 
 async function getFilters() {
-  const platforms = await db.game.findMany({
-    where: { status: "active" },
-    select: { platform: true },
-    distinct: ["platform"],
-    orderBy: { platform: "asc" },
-  });
+  try {
+    const platforms = await db.game.findMany({
+      where: { status: "active" },
+      select: { platform: true },
+      distinct: ["platform"],
+      orderBy: { platform: "asc" },
+    });
 
-  const genres = await db.game.findMany({
-    where: { status: "active" },
-    select: { genre: true },
-    distinct: ["genre"],
-    orderBy: { genre: "asc" },
-  });
+    const genres = await db.game.findMany({
+      where: { status: "active" },
+      select: { genre: true },
+      distinct: ["genre"],
+      orderBy: { genre: "asc" },
+    });
 
-  return {
-    platforms: platforms.map((p) => p.platform).filter(Boolean) as string[],
-    genres: genres.map((g) => g.genre).filter(Boolean) as string[],
-  };
+    return {
+      platforms: platforms.map((p) => p.platform).filter(Boolean) as string[],
+      genres: genres.map((g) => g.genre).filter(Boolean) as string[],
+    };
+  } catch (error) {
+    console.error("Database error:", error);
+    return { platforms: [], genres: [] };
+  }
 }
 
 export default async function GamesPage({

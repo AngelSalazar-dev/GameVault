@@ -28,17 +28,22 @@ const platformLabels: Record<string, string> = {
 };
 
 async function getPlatforms() {
-  const platforms = await db.game.groupBy({
-    by: ["platform"],
-    where: { status: "active" },
-    _count: { id: true },
-    orderBy: { platform: "asc" },
-  });
+  try {
+    const platforms = await db.game.groupBy({
+      by: ["platform"],
+      where: { status: "active" },
+      _count: { id: true },
+      orderBy: { platform: "asc" },
+    });
 
-  return platforms.map((p) => ({
-    platform: p.platform,
-    count: p._count.id,
-  }));
+    return platforms.map((p) => ({
+      platform: p.platform,
+      count: p._count.id,
+    }));
+  } catch (error) {
+    console.error("Database error:", error);
+    return [];
+  }
 }
 
 export default async function PlatformsPage() {

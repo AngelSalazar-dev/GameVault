@@ -45,16 +45,22 @@ export default async function GamePage({
 }) {
   const { slug } = await params;
 
-  const game = await db.game.findUnique({
-    where: { slug },
-    include: {
-      downloadLinks: true,
-      collections: {
-        include: { collection: true },
+  let game: any = null;
+  try {
+    game = await db.game.findUnique({
+      where: { slug },
+      include: {
+        downloadLinks: true,
+        collections: {
+          include: { collection: true },
+        },
+        manuals: true,
       },
-      manuals: true,
-    },
-  });
+    });
+  } catch (error) {
+    console.error("Database error:", error);
+    notFound();
+  }
 
   if (!game) {
     notFound();

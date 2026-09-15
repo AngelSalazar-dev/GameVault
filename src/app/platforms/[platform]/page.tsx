@@ -36,23 +36,29 @@ export default async function PlatformPage({
 }) {
   const { platform } = await params;
 
-  const games = await db.game.findMany({
-    where: {
-      platform,
-      status: "active",
-    },
-    orderBy: { createdAt: "desc" },
-    select: {
-      id: true,
-      title: true,
-      slug: true,
-      platform: true,
-      coverImage: true,
-      rating: true,
-      fileSize: true,
-      releaseYear: true,
-    },
-  });
+  let games: any[] = [];
+  try {
+    games = await db.game.findMany({
+      where: {
+        platform,
+        status: "active",
+      },
+      orderBy: { createdAt: "desc" },
+      select: {
+        id: true,
+        title: true,
+        slug: true,
+        platform: true,
+        coverImage: true,
+        rating: true,
+        fileSize: true,
+        releaseYear: true,
+      },
+    });
+  } catch (error) {
+    console.error("Database error:", error);
+    games = [];
+  }
 
   if (games.length === 0) {
     return (

@@ -3,20 +3,25 @@ import { BookOpen, Download } from "lucide-react";
 import Link from "next/link";
 
 async function getManuals() {
-  const manuals = await db.manual.findMany({
-    include: {
-      game: {
-        select: {
-          title: true,
-          slug: true,
-          platform: true,
+  try {
+    const manuals = await db.manual.findMany({
+      include: {
+        game: {
+          select: {
+            title: true,
+            slug: true,
+            platform: true,
+          },
         },
       },
-    },
-    orderBy: { createdAt: "desc" },
-  });
+      orderBy: { createdAt: "desc" },
+    });
 
-  return manuals;
+    return manuals;
+  } catch (error) {
+    console.error("Database error:", error);
+    return [];
+  }
 }
 
 export default async function ManualsPage() {

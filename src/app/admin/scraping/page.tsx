@@ -8,11 +8,16 @@ import {
 } from "lucide-react";
 
 async function getScrapingQueue() {
-  const queue = await db.scrapingQueue.findMany({
-    orderBy: { createdAt: "desc" },
-  });
+  try {
+    const queue = await db.scrapingQueue.findMany({
+      orderBy: { createdAt: "desc" },
+    });
 
-  return queue;
+    return queue;
+  } catch (error) {
+    console.error("Database error:", error);
+    return [];
+  }
 }
 
 export default async function ScrapingPage() {

@@ -3,19 +3,24 @@ import { db } from "@/lib/db";
 import { Folder } from "lucide-react";
 
 async function getCollections() {
-  const collections = await db.collection.findMany({
-    include: {
-      _count: {
-        select: { games: true },
+  try {
+    const collections = await db.collection.findMany({
+      include: {
+        _count: {
+          select: { games: true },
+        },
       },
-    },
-    orderBy: { name: "asc" },
-  });
+      orderBy: { name: "asc" },
+    });
 
-  return collections.map((c) => ({
-    ...c,
-    gameCount: c._count.games,
-  }));
+    return collections.map((c) => ({
+      ...c,
+      gameCount: c._count.games,
+    }));
+  } catch (error) {
+    console.error("Database error:", error);
+    return [];
+  }
 }
 
 export default async function CollectionsPage() {

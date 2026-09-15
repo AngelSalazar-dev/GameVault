@@ -11,33 +11,39 @@ export default async function CollectionPage({
 }) {
   const { slug } = await params;
 
-  const collection = await db.collection.findUnique({
-    where: { slug },
-    include: {
-      games: {
-        include: {
-          game: {
-            select: {
-              id: true,
-              title: true,
-              slug: true,
-              platform: true,
-              coverImage: true,
-              rating: true,
-              fileSize: true,
-              releaseYear: true,
+  let collection: any = null;
+  try {
+    collection = await db.collection.findUnique({
+      where: { slug },
+      include: {
+        games: {
+          include: {
+            game: {
+              select: {
+                id: true,
+                title: true,
+                slug: true,
+                platform: true,
+                coverImage: true,
+                rating: true,
+                fileSize: true,
+                releaseYear: true,
+              },
             },
           },
         },
       },
-    },
-  });
+    });
+  } catch (error) {
+    console.error("Database error:", error);
+    notFound();
+  }
 
   if (!collection) {
     notFound();
   }
 
-  const games = collection.games.map((gc) => ({
+  const games = collection.games.map((gc: any) => ({
     ...gc.game,
     coverImage: gc.game.coverImage ?? undefined,
     fileSize: gc.game.fileSize ?? undefined,
