@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { Search, Menu, X, Gamepad2, HardDrive, BookOpen } from "lucide-react";
+import { Search, Menu, X, Gamepad2, HardDrive, BookOpen, Grid3X3 } from "lucide-react";
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -24,6 +24,13 @@ export default function Header() {
           >
             <HardDrive className="h-4 w-4" />
             Games
+          </Link>
+          <Link
+            href="/categories"
+            className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <Grid3X3 className="h-4 w-4" />
+            Categories
           </Link>
           <Link
             href="/platforms"
@@ -78,6 +85,14 @@ export default function Header() {
             >
               <HardDrive className="h-4 w-4" />
               Games
+            </Link>
+            <Link
+              href="/categories"
+              className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm hover:bg-card transition-colors"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              <Grid3X3 className="h-4 w-4" />
+              Categories
             </Link>
             <Link
               href="/platforms"

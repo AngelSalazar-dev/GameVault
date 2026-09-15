@@ -165,8 +165,8 @@ export default async function GamePage({
             {game.downloadLinks.length > 0 ? (
               <div className="space-y-2">
                 {game.downloadLinks
-                  .filter((link) => link.isActive)
-                  .map((link) => (
+                  .filter((link: { isActive: boolean }) => link.isActive)
+                  .map((link: { id: string; url: string; host?: string; fileSize?: string }) => (
                     <a
                       key={link.id}
                       href={link.url}
@@ -239,7 +239,7 @@ export default async function GamePage({
             <div className="rounded-lg border border-border bg-card p-6 space-y-4">
               <h2 className="text-lg font-semibold">Collections</h2>
               <div className="flex flex-wrap gap-2">
-                {game.collections.map((gc) => (
+                {game.collections.map((gc: { collection: { id: string; name: string; slug: string } }) => (
                   <Link
                     key={gc.collection.id}
                     href={`/collections/${gc.collection.slug}`}
