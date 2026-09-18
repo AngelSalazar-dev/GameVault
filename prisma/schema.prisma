@@ -189,3 +189,38 @@ enum ScrapingStatus {
   approved
   rejected
 }
+
+enum AdminRole {
+  superadmin
+  admin
+  editor
+}
+
+model Admin {
+  id           String      @id @default(cuid())
+  email        String      @unique
+  passwordHash String
+  name         String?
+  role         AdminRole   @default(admin)
+  isActive     Boolean     @default(true)
+  createdAt    DateTime    @default(now())
+  logs         AdminLog[]
+}
+
+model AdminLog {
+  id        String   @id @default(cuid())
+  adminId   String?
+  action    String
+  ip        String?
+  country   String?
+  city      String?
+  isp       String?
+  userAgent String?  @db.Text
+  details   String?  @db.Text
+  createdAt DateTime @default(now())
+  admin     Admin?   @relation(fields: [adminId], references: [id])
+
+  @@index([adminId])
+  @@index([action])
+  @@index([createdAt])
+}
