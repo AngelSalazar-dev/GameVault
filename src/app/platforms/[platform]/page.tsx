@@ -3,31 +3,7 @@ import { db } from "@/lib/db";
 import GameGrid from "@/components/games/GameGrid";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
-
-const platformLabels: Record<string, string> = {
-  pc: "PC",
-  ps1: "PlayStation 1",
-  ps2: "PlayStation 2",
-  ps3: "PlayStation 3",
-  ps4: "PlayStation 4",
-  ps5: "PlayStation 5",
-  n64: "Nintendo 64",
-  gamecube: "GameCube",
-  wii: "Wii",
-  wiiu: "Wii U",
-  switch: "Nintendo Switch",
-  genesis: "Sega Genesis",
-  snes: "Super Nintendo",
-  nes: "Nintendo",
-  gb: "Game Boy",
-  gba: "Game Boy Advance",
-  ds: "Nintendo DS",
-  "3ds": "Nintendo 3DS",
-  xbox: "Xbox",
-  xbox360: "Xbox 360",
-  xboxone: "Xbox One",
-  xboxseries: "Xbox Series",
-};
+import { PLATFORM_LABELS } from "@/lib/constants";
 
 export default async function PlatformPage({
   params,
@@ -72,7 +48,7 @@ export default async function PlatformPage({
         </Link>
         <div className="text-center py-16">
           <h1 className="text-3xl font-bold mb-2">
-            {platformLabels[platform] || platform.toUpperCase()}
+            {PLATFORM_LABELS[platform] || platform.toUpperCase()}
           </h1>
           <p className="text-muted-foreground">No games found for this platform.</p>
         </div>
@@ -92,7 +68,7 @@ export default async function PlatformPage({
 
       <div className="space-y-2">
         <h1 className="text-3xl font-bold">
-          {platformLabels[platform] || platform.toUpperCase()}
+          {PLATFORM_LABELS[platform] || platform.toUpperCase()}
         </h1>
         <p className="text-muted-foreground">
           {games.length} {games.length === 1 ? "game" : "games"} available

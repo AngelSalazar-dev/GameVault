@@ -1,25 +1,9 @@
 import Link from "next/link";
 import { Gamepad2, ArrowRight } from "lucide-react";
 import { db } from "@/lib/db";
+import { CATEGORIES } from "@/lib/constants";
 
-const CATEGORIES = [
-  { slug: "action", name: "Action", icon: "💥", color: "from-red-500/20 to-orange-500/20" },
-  { slug: "adventure", name: "Adventure", icon: "🗺️", color: "from-blue-500/20 to-cyan-500/20" },
-  { slug: "anime", name: "Anime", icon: "🎌", color: "from-pink-500/20 to-purple-500/20" },
-  { slug: "building", name: "Building", icon: "🏗️", color: "from-yellow-500/20 to-amber-500/20" },
-  { slug: "horror", name: "Horror", icon: "👻", color: "from-gray-500/20 to-red-500/20" },
-  { slug: "indie", name: "Indie", icon: "🎮", color: "from-green-500/20 to-emerald-500/20" },
-  { slug: "multiplayer", name: "Multiplayer", icon: "👥", color: "from-blue-500/20 to-indigo-500/20" },
-  { slug: "open-world", name: "Open World", icon: "🌍", color: "from-teal-500/20 to-green-500/20" },
-  { slug: "racing", name: "Racing", icon: "🏎️", color: "from-orange-500/20 to-red-500/20" },
-  { slug: "role-playing-game", name: "RPG", icon: "⚔️", color: "from-purple-500/20 to-pink-500/20" },
-  { slug: "simulation", name: "Simulation", icon: "🎯", color: "from-indigo-500/20 to-blue-500/20" },
-  { slug: "sports", name: "Sports", icon: "⚽", color: "from-green-500/20 to-lime-500/20" },
-  { slug: "strategy", name: "Strategy", icon: "🧠", color: "from-amber-500/20 to-yellow-500/20" },
-  { slug: "survival", name: "Survival", icon: "🏕️", color: "from-emerald-500/20 to-teal-500/20" },
-  { slug: "virtual-reality", name: "VR", icon: "🥽", color: "from-violet-500/20 to-purple-500/20" },
-  { slug: "first-person-shooter", name: "FPS", icon: "🔫", color: "from-red-500/20 to-pink-500/20" },
-];
+export const dynamic = "force-dynamic";
 
 async function getCategoryCounts() {
   try {
@@ -38,27 +22,28 @@ async function getCategoryCounts() {
   }
 }
 
-async function getCategoryPreview(genre: string) {
+async function getCategoryPreviews() {
   try {
-    const games = await db.game.findMany({
-      where: { status: "active", genre, coverImage: { not: null } },
-      orderBy: { createdAt: "desc" },
-      take: 4,
-      select: {
-        id: true,
-        title: true,
-        slug: true,
-        coverImage: true,
-      },
-    });
-    return games;
+    const previews: Record<string, { id: string; title: string; slug: string; coverImage: string | null }[]> = {};
+    await Promise.all(
+      CATEGORIES.map(async (cat) => {
+        const games = await db.game.findMany({
+          where: { status: "active", genre: cat.slug, coverImage: { not: null } },
+          orderBy: { createdAt: "desc" },
+          take: 4,
+          select: { id: true, title: true, slug: true, coverImage: true },
+        });
+        previews[cat.slug] = games;
+      })
+    );
+    return previews;
   } catch {
-    return [];
+    return {};
   }
 }
 
 export default async function CategoriesPage() {
-  const [counts] = await Promise.all([getCategoryCounts()]);
+  const [counts, previews] = await Promise.all([getCategoryCounts(), getCategoryPreviews()]);
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 space-y-8">
@@ -70,17 +55,16 @@ export default async function CategoriesPage() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {CATEGORIES.map(async (cat) => {
+        {CATEGORIES.map((cat) => {
           const count = counts[cat.slug] || 0;
-          const preview = await getCategoryPreview(cat.slug);
+          const preview = previews[cat.slug] || [];
           return (
             <Link
               key={cat.slug}
               href={`/games?genre=${cat.slug}`}
               className="group"
             >
-              <div className={`rounded-xl border border-border bg-card overflow-hidden transition-all hover:border-accent hover:shadow-lg hover:shadow-accent/10`}>
-                {/* Preview grid */}
+              <div className="rounded-xl border border-border bg-card overflow-hidden transition-all hover:border-accent hover:shadow-lg hover:shadow-accent/10">
                 <div className={`grid grid-cols-2 gap-0.5 bg-gradient-to-br ${cat.color} p-0.5`}>
                   {[0, 1, 2, 3].map((i) => (
                     <div key={i} className="aspect-square bg-muted/50 overflow-hidden">
@@ -99,7 +83,6 @@ export default async function CategoriesPage() {
                   ))}
                 </div>
 
-                {/* Info */}
                 <div className="p-4 flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <span className="text-3xl">{cat.icon}</span>

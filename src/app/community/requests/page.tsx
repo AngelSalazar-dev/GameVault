@@ -1,6 +1,8 @@
 import { db } from "@/lib/db";
 import { ClipboardList, Plus, ArrowUp } from "lucide-react";
 
+export const dynamic = "force-dynamic";
+
 async function getRequests() {
   try {
     const requests = await db.request.findMany({

@@ -4,10 +4,12 @@ import {
   Database,
   Gamepad2,
   ClipboardList,
-  Users,
+  BookOpen,
   TrendingUp,
 } from "lucide-react";
 import Link from "next/link";
+
+export const dynamic = "force-dynamic";
 
 async function getStats() {
   try {
@@ -40,7 +42,7 @@ export default async function AdminPage() {
         <p className="text-muted-foreground">Manage your GameVault</p>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
         <div className="rounded-lg border border-border bg-card p-4 space-y-2">
           <div className="flex items-center justify-between">
             <Gamepad2 className="h-5 w-5 text-muted-foreground" />
@@ -68,7 +70,15 @@ export default async function AdminPage() {
 
         <div className="rounded-lg border border-border bg-card p-4 space-y-2">
           <div className="flex items-center justify-between">
-            <Users className="h-5 w-5 text-muted-foreground" />
+            <BookOpen className="h-5 w-5 text-muted-foreground" />
+          </div>
+          <div className="text-2xl font-bold">{stats.manuals}</div>
+          <div className="text-sm text-muted-foreground">Manuals</div>
+        </div>
+
+        <div className="rounded-lg border border-border bg-card p-4 space-y-2">
+          <div className="flex items-center justify-between">
+            <Database className="h-5 w-5 text-muted-foreground" />
           </div>
           <div className="text-2xl font-bold">{stats.pendingScraping}</div>
           <div className="text-sm text-muted-foreground">Pending Scraping</div>

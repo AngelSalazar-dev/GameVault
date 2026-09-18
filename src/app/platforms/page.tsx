@@ -1,31 +1,9 @@
 import Link from "next/link";
 import { db } from "@/lib/db";
 import { Gamepad2 } from "lucide-react";
+import { PLATFORM_LABELS } from "@/lib/constants";
 
-const platformLabels: Record<string, string> = {
-  pc: "PC",
-  ps1: "PlayStation 1",
-  ps2: "PlayStation 2",
-  ps3: "PlayStation 3",
-  ps4: "PlayStation 4",
-  ps5: "PlayStation 5",
-  n64: "Nintendo 64",
-  gamecube: "GameCube",
-  wii: "Wii",
-  wiiu: "Wii U",
-  switch: "Nintendo Switch",
-  genesis: "Sega Genesis",
-  snes: "Super Nintendo",
-  nes: "Nintendo",
-  gb: "Game Boy",
-  gba: "Game Boy Advance",
-  ds: "Nintendo DS",
-  "3ds": "Nintendo 3DS",
-  xbox: "Xbox",
-  xbox360: "Xbox 360",
-  xboxone: "Xbox One",
-  xboxseries: "Xbox Series",
-};
+export const dynamic = "force-dynamic";
 
 async function getPlatforms() {
   try {
@@ -70,7 +48,7 @@ export default async function PlatformsPage() {
             </div>
             <div>
               <h3 className="font-semibold">
-                {platformLabels[p.platform] || p.platform.toUpperCase()}
+                {PLATFORM_LABELS[p.platform] || p.platform.toUpperCase()}
               </h3>
               <p className="text-sm text-muted-foreground">
                 {p.count} {p.count === 1 ? "game" : "games"}

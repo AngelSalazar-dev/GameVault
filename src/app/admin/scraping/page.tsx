@@ -7,6 +7,8 @@ import {
   ExternalLink,
 } from "lucide-react";
 
+export const dynamic = "force-dynamic";
+
 async function getScrapingQueue() {
   try {
     const queue = await db.scrapingQueue.findMany({

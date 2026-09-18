@@ -4,6 +4,8 @@ import GameGrid from "@/components/games/GameGrid";
 import { ArrowLeft, Folder } from "lucide-react";
 import Link from "next/link";
 
+export const dynamic = "force-dynamic";
+
 export default async function CollectionPage({
   params,
 }: {
@@ -36,7 +38,7 @@ export default async function CollectionPage({
     });
   } catch (error) {
     console.error("Database error:", error);
-    notFound();
+    throw new Error("Failed to load collection");
   }
 
   if (!collection) {

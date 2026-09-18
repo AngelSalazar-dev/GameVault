@@ -1,6 +1,8 @@
 import { db } from "@/lib/db";
-import { BookOpen, Download } from "lucide-react";
+import { BookOpen } from "lucide-react";
 import Link from "next/link";
+
+export const dynamic = "force-dynamic";
 
 async function getManuals() {
   try {

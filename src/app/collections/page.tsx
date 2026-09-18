@@ -2,6 +2,8 @@ import Link from "next/link";
 import { db } from "@/lib/db";
 import { Folder } from "lucide-react";
 
+export const dynamic = "force-dynamic";
+
 async function getCollections() {
   try {
     const collections = await db.collection.findMany({

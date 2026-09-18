@@ -1,21 +1,7 @@
 import Link from "next/link";
 import { Gamepad2, HardDrive, BookOpen, ArrowRight, Download, Star } from "lucide-react";
 import { db } from "@/lib/db";
-
-const CATEGORIES = [
-  { slug: "action", name: "Action", icon: "💥" },
-  { slug: "adventure", name: "Adventure", icon: "🗺️" },
-  { slug: "horror", name: "Horror", icon: "👻" },
-  { slug: "racing", name: "Racing", icon: "🏎️" },
-  { slug: "role-playing-game", name: "RPG", icon: "⚔️" },
-  { slug: "simulation", name: "Simulation", icon: "🎯" },
-  { slug: "sports", name: "Sports", icon: "⚽" },
-  { slug: "strategy", name: "Strategy", icon: "🧠" },
-  { slug: "survival", name: "Survival", icon: "🏕️" },
-  { slug: "building", name: "Building", icon: "🏗️" },
-  { slug: "indie", name: "Indie", icon: "🎮" },
-  { slug: "multiplayer", name: "Multiplayer", icon: "👥" },
-];
+import { HOME_CATEGORIES } from "@/lib/constants";
 
 async function getRecentGames() {
   try {
@@ -208,7 +194,7 @@ export default async function Home() {
           </Link>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
-          {CATEGORIES.map((cat) => (
+          {HOME_CATEGORIES.map((cat) => (
             <Link
               key={cat.slug}
               href={`/games?genre=${cat.slug}`}
@@ -222,7 +208,7 @@ export default async function Home() {
       </section>
 
       {/* Category Previews */}
-      {CATEGORIES.slice(0, 4).map(async (cat) => {
+      {HOME_CATEGORIES.slice(0, 4).map(async (cat) => {
         const games = await getCategoryGames(cat.slug);
         if (games.length === 0) return null;
         return (
