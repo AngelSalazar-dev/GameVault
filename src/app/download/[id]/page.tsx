@@ -1,8 +1,26 @@
 import { db } from "@/lib/db";
-import { ExternalLink, Download, ArrowLeft } from "lucide-react";
+import { Download, ArrowLeft, ExternalLink } from "lucide-react";
 import Link from "next/link";
 
 export const dynamic = "force-dynamic";
+
+async function fetchWithReferrer(url: string, referrer: string): Promise<string | null> {
+  try {
+    const res = await fetch(url, {
+      headers: {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+        "Referer": referrer,
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+      },
+      redirect: "follow",
+      signal: AbortSignal.timeout(10000),
+    });
+    if (res.ok) return res.url;
+    return null;
+  } catch {
+    return null;
+  }
+}
 
 export default async function DownloadPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -27,14 +45,35 @@ export default async function DownloadPage({ params }: { params: Promise<{ id: s
     );
   }
 
+  const host = link.host?.toLowerCase() || "";
+  let redirectUrl = link.url;
+  let method = "direct";
+
+  // MegaDB: try fetching server-side with SteamRip referrer
+  if (host === "megadb") {
+    method = "server-fetch-megadb";
+    const resolved = await fetchWithReferrer(link.url, "https://steamrip.com/");
+    if (resolved) {
+      redirectUrl = resolved;
+    }
+  }
+
+  // bzzhr: try fetching server-side with SteamRip referrer
+  if (host === "bzzhr" || host === "buzzheavier") {
+    method = "server-fetch-bzzhr";
+    const resolved = await fetchWithReferrer(link.url, "https://steamrip.com/");
+    if (resolved) {
+      redirectUrl = resolved;
+    }
+  }
+
   return (
     <html>
       <head>
-        <meta name="referrer" content="no-referrer" />
         <title>Descargando {link.game.title}...</title>
         <script dangerouslySetInnerHTML={{ __html: `
           window.onload = function() {
-            window.location.href = ${JSON.stringify(link.url)};
+            window.location.href = ${JSON.stringify(redirectUrl)};
           }
         `}} />
       </head>
@@ -62,8 +101,8 @@ export default async function DownloadPage({ params }: { params: Promise<{ id: s
             </div>
             <p className="text-gray-500 text-xs">
               Si la descarga no inicia,{" "}
-              <a href={link.url} target="_blank" rel="noreferrer" className="text-accent hover:underline">
-                haz clic aqu&iacute;
+              <a href={redirectUrl} target="_blank" rel="noopener noreferrer" className="text-accent hover:underline inline-flex items-center gap-1">
+                haz clic aqu&iacute; <ExternalLink className="h-3 w-3" />
               </a>
             </p>
           </div>
