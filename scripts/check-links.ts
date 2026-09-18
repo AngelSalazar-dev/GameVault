@@ -1,34 +1,26 @@
-import { PrismaClient } from "@prisma/client";
-const prisma = new PrismaClient();
+import { PrismaClient } from '@prisma/client';
+
+const db = new PrismaClient();
 
 async function main() {
-  const total = await prisma.game.count({ where: { source: "steamrip" } });
-  const withLinks = await prisma.game.count({
-    where: {
-      source: "steamrip",
-      downloadLinks: { some: { url: { not: { contains: "example.com" } } } },
-    },
-  });
-
-  console.log(`Total SteamRip games: ${total}`);
-  console.log(`Games with real links: ${withLinks}`);
-
-  const games = await prisma.game.findMany({
-    where: { source: "steamrip" },
-    include: {
-      downloadLinks: {
-        where: { url: { not: { contains: "example.com" } } },
-      },
-    },
-    orderBy: { title: "asc" },
-    take: 10,
-  });
-
-  games.forEach((g) => {
-    console.log(`${g.title} | ${g.downloadLinks.length} links`);
-  });
-
-  await prisma.$disconnect();
+  const links = await db.downloadLink.findMany({ select: { url: true } });
+  const hostCounts: Record<string, number> = {};
+  
+  for (const l of links) {
+    try {
+      const url = l.url.startsWith('//') ? 'https:' + l.url : l.url;
+      const host = new URL(url).hostname;
+      hostCounts[host] = (hostCounts[host] || 0) + 1;
+    } catch {
+      hostCounts['invalid'] = (hostCounts['invalid'] || 0) + 1;
+    }
+  }
+  
+  const sorted = Object.entries(hostCounts).sort((a, b) => b[1] - a[1]);
+  console.log('Total links:', links.length);
+  sorted.forEach(([host, count]) => console.log(`  ${host}: ${count}`));
+  
+  await db.$disconnect();
 }
 
 main();

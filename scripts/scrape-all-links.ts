@@ -5,7 +5,6 @@ import fs from "fs";
 
 const prisma = new PrismaClient();
 const PROGRESS_FILE = "scripts/link-scrape-progress.json";
-const BATCH_SIZE = 50;
 
 interface Progress {
   processed: number;
@@ -29,65 +28,86 @@ function saveProgress(p: Progress) {
   fs.writeFileSync(PROGRESS_FILE, JSON.stringify(p, null, 2));
 }
 
-function buildSearchUrl(title: string): string {
-  const slug = title
-    .toLowerCase()
-    .replace(/[^\w\s-]/g, "")
-    .replace(/[\s_-]+/g, "-")
-    .replace(/-+/g, "-")
-    .trim();
-  return `https://steamrip.com/${slug}-free-download/`;
-}
-
 async function extractLinks($: cheerio.CheerioAPI): Promise<{ url: string; host: string }[]> {
   const links: { url: string; host: string }[] = [];
   const seen = new Set<string>();
 
-  // Primary: look for shortc-button links
-  $("a.shortc-button").each((_, el) => {
-    let href = $(el).attr("href") || "";
-    if (href && href.includes("bzzhr")) {
-      href = href.startsWith("//") ? `https:${href}` : href;
-      if (!seen.has(href)) {
-        seen.add(href);
-        links.push({ url: href, host: "bzzhr" });
-      }
+  const shortcButtons = $("a.shortc-button");
+  shortcButtons.each((i, el) => {
+    const rawHref = $(el).attr("href");
+    let href = rawHref || "";
+    if (!href) return;
+    // Convert protocol-relative URLs FIRST (before checking /)
+    href = href.startsWith("//") ? `https:${href}` : href;
+    // Skip relative paths (/path) but not https://...
+    if (href.startsWith("/") && !href.startsWith("https://")) return;
+
+    let host = "";
+    if (href.includes("bzzhr")) host = "bzzhr";
+    else if (href.includes("megadb")) host = "megadb";
+    else if (href.includes("gofile")) host = "gofile";
+    else if (href.includes("fileditch")) host = "fileditch";
+    else if (href.includes("krakenfiles")) host = "krakenfiles";
+
+    if (host && !seen.has(href)) {
+      seen.add(href);
+      links.push({ url: href, host });
     }
   });
 
-  // Fallback: look for any bzzhr links
   if (links.length === 0) {
     $("a[href]").each((_, el) => {
       let href = $(el).attr("href") || "";
-      if (href.includes("bzzhr.to")) {
-        href = href.startsWith("//") ? `https:${href}` : href;
-        if (!seen.has(href)) {
-          seen.add(href);
-          links.push({ url: href, host: "bzzhr" });
-        }
+      if (!href) return;
+      href = href.startsWith("//") ? `https:${href}` : href;
+      if (href.startsWith("/") && !href.startsWith("https://")) return;
+
+      let host = "";
+      if (href.includes("bzzhr.to")) host = "bzzhr";
+      else if (href.includes("megadb.net")) host = "megadb";
+      else if (href.includes("gofile.io")) host = "gofile";
+      else if (href.includes("fileditch")) host = "fileditch";
+      else if (href.includes("krakenfiles")) host = "krakenfiles";
+
+      if (host && !seen.has(href)) {
+        seen.add(href);
+        links.push({ url: href, host });
       }
     });
   }
 
-  // Also check for GOFILE, FILEDITCH, etc.
-  $("a[href]").each((_, el) => {
-    let href = $(el).attr("href") || "";
-    if (href.includes("gofile.io") || href.includes("fileditch") || href.includes("krakenfiles")) {
-      href = href.startsWith("//") ? `https:${href}` : href;
-      if (!seen.has(href)) {
-        seen.add(href);
-        const host = href.includes("gofile") ? "gofile" : href.includes("fileditch") ? "fileditch" : "krakenfiles";
-        links.push({ url: href, host });
-      }
-    }
-  });
-
   return links;
+}
+
+function normalizeTitle(title: string): string {
+  return title
+    .toLowerCase()
+    .replace(/['']/g, "")
+    .replace(/[^\w\s]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
 }
 
 async function main() {
   const progress = loadProgress();
   console.log(`Resuming: ${progress.processed} processed, ${progress.found} found, ${progress.failed} failed`);
+
+  // Load the real SteamRip URLs from listings
+  const listings: { title: string; url: string }[] = JSON.parse(
+    fs.readFileSync("scripts/steamrip-all-listings.json", "utf-8")
+  );
+
+  // Build a lookup map: normalized title -> URL
+  const urlMap = new Map<string, string>();
+  for (const listing of listings) {
+    if (listing.url) {
+      const key = normalizeTitle(listing.title);
+      // Fix double slashes in URLs
+      const cleanUrl = listing.url.replace("steamrip.com//", "steamrip.com/");
+      urlMap.set(key, cleanUrl);
+    }
+  }
+  console.log(`Loaded ${urlMap.size} URLs from listings`);
 
   // Get games without download links
   const games = await prisma.game.findMany({
@@ -104,12 +124,24 @@ async function main() {
     orderBy: { title: "asc" },
   });
 
-  // Filter out already completed
-  const remaining = games.filter((g) => !progress.completedSlugs.includes(g.slug));
-  console.log(`Games to scrape: ${remaining.length}`);
+  // Match games to their real URLs
+  const gamesWithUrls = games
+    .filter((g) => !progress.completedSlugs.includes(g.slug))
+    .map((g) => {
+      const key = normalizeTitle(g.title);
+      const url = urlMap.get(key);
+      return { ...g, url };
+    });
 
-  if (remaining.length === 0) {
-    console.log("All games already processed!");
+  const withUrl = gamesWithUrls.filter((g) => g.url);
+  const withoutUrl = gamesWithUrls.filter((g) => !g.url);
+
+  console.log(`Games to scrape: ${gamesWithUrls.length}`);
+  console.log(`  With URL match: ${withUrl.length}`);
+  console.log(`  Without URL match: ${withoutUrl.length} (will skip)`);
+
+  if (withUrl.length === 0) {
+    console.log("No games to scrape!");
     await prisma.$disconnect();
     return;
   }
@@ -156,24 +188,22 @@ async function main() {
 
   let batchCount = 0;
 
-  for (let i = 0; i < remaining.length; i++) {
-    const game = remaining[i];
-    const searchUrl = buildSearchUrl(game.title);
+  for (let i = 0; i < withUrl.length; i++) {
+    const game = withUrl[i];
+    const searchUrl = game.url;
 
     try {
-      // Delay between requests (3-7 seconds)
       if (i > 0) {
         const delay = 3000 + Math.random() * 4000;
         await new Promise((r) => setTimeout(r, delay));
       }
 
-      await page.goto(searchUrl, { waitUntil: "domcontentloaded", timeout: 30000 });
-      await new Promise((r) => setTimeout(r, 2000));
+      await page.goto(searchUrl, { waitUntil: "networkidle2", timeout: 30000 });
+      await new Promise((r) => setTimeout(r, 3000));
 
       let html = await page.content();
       let $ = cheerio.load(html);
 
-      // Handle Cloudflare
       if ($("title").text().includes("Just a moment")) {
         console.log(`  [${progress.processed + 1}] Cloudflare, waiting...`);
         await new Promise((r) => setTimeout(r, 8000));
@@ -192,7 +222,6 @@ async function main() {
       const links = await extractLinks($);
 
       if (links.length > 0) {
-        // Save to DB
         for (const link of links) {
           await prisma.downloadLink.create({
             data: {
@@ -205,30 +234,30 @@ async function main() {
           });
         }
         progress.found++;
-        console.log(`  [${progress.processed + 1}] ${game.title} -> ${links.length} link(s)`);
+        console.log(`  [${progress.processed + 1}] ${game.title} -> ${links.length} link(s) [${links.map(l => l.host).join(", ")}]`);
       } else {
         progress.failed++;
-        console.log(`  [${progress.processed + 1}] ${game.title} -> no links`);
+        // Debug: log page title and shortc-button count
+        const pageTitle = $("title").text();
+        const shortcCount = $("a.shortc-button").length;
+        console.log(`  [${progress.processed + 1}] ${game.title} -> no links (title: "${pageTitle.substring(0, 40)}", shortc: ${shortcCount})`);
       }
 
       progress.processed++;
       progress.lastSlug = game.slug;
       progress.completedSlugs.push(game.slug);
 
-      // Save progress every 10 games
       batchCount++;
       if (batchCount >= 10) {
         saveProgress(progress);
         batchCount = 0;
       }
 
-      // Status update every 50 games
       if (progress.processed % 50 === 0) {
-        console.log(`\n--- Progress: ${progress.processed}/${remaining.length} (${progress.found} found, ${progress.failed} failed, ${progress.blocked} blocked) ---\n`);
+        console.log(`\n--- Progress: ${progress.processed}/${withUrl.length} (${progress.found} found, ${progress.failed} failed, ${progress.blocked} blocked) ---\n`);
       }
     } catch (err: any) {
       const msg = err.message || "";
-      // Restart browser on detached frame or critical errors
       if (msg.includes("detached") || msg.includes("Target closed") || msg.includes("Session closed")) {
         console.log(`  -> Browser crashed, restarting...`);
         await restartBrowser();
@@ -239,6 +268,12 @@ async function main() {
       console.log(`  [${progress.processed}] ${game.title} -> ERROR: ${msg.substring(0, 60)}`);
       saveProgress(progress);
     }
+  }
+
+  // Mark games without URL match as completed (can't scrape them)
+  for (const g of withoutUrl) {
+    progress.processed++;
+    progress.completedSlugs.push(g.slug);
   }
 
   await browser.close();
