@@ -169,9 +169,7 @@ export default async function GamePage({
                   .map((link: { id: string; url: string; host?: string; fileSize?: string }) => (
                     <a
                       key={link.id}
-                      href={link.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                      href={`/download/${link.id}`}
                       className="flex items-center justify-between rounded-lg border border-border p-3 hover:border-accent hover:bg-accent/5 transition-colors"
                     >
                       <div className="flex items-center gap-2">
