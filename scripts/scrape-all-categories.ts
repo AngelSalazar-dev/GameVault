@@ -1,6 +1,7 @@
 import puppeteer from "puppeteer";
 import * as cheerio from "cheerio";
 import fs from "fs";
+import { normalizeGenre } from "./lib/normalize";
 
 const BASE_URL = "https://steamrip.com";
 const CATEGORIES = [
@@ -252,7 +253,7 @@ async function scrapeDetailPages(
             ? detailCover
             : `${BASE_URL}/${detailCover}`
           : game.coverImage,
-        genre: gameInfo["genre"],
+        genre: normalizeGenre(gameInfo["genre"]),
         developer: gameInfo["developer"],
         downloadLinks,
       });

@@ -29,6 +29,64 @@ export default async function DownloadPage({ params }: { params: Promise<{ id: s
 
   const host = link.host?.toLowerCase() || "";
 
+  // Filecrypt: show URL + password for manual captcha solving
+  if (host === "filecrypt") {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-[#0a0a0f] px-4">
+        <div className="text-center space-y-6 max-w-md mx-auto">
+          {link.game.coverImage && (
+            <img
+              src={link.game.coverImage}
+              alt={link.game.title}
+              className="w-32 h-44 object-cover rounded-lg mx-auto shadow-lg shadow-accent/10"
+            />
+          )}
+          <div className="space-y-2">
+            <h1 className="text-xl font-bold text-white">{link.game.title}</h1>
+            <p className="text-gray-400 text-sm">
+              Descarga disponible en <span className="text-accent font-medium">filecrypt.cc</span>
+              {link.fileSize && <span className="text-gray-500"> &middot; {link.fileSize}</span>}
+            </p>
+          </div>
+
+          {link.password && (
+            <div className="rounded-lg border border-yellow-500/30 bg-yellow-500/5 p-4">
+              <p className="text-sm text-yellow-400">
+                <span className="font-bold">Contrase&ntilde;a:</span>{" "}
+                <code className="bg-yellow-500/10 px-2 py-0.5 rounded text-yellow-300 font-mono">
+                  {link.password}
+                </code>
+              </p>
+            </div>
+          )}
+
+          <div className="rounded-lg border border-accent/20 bg-accent/5 p-4 space-y-3">
+            <p className="text-sm text-gray-300">
+              Para descargar, necesitas abrir el enlace de filecrypt.cc y resolver el captcha de verificaci&oacute;n.
+            </p>
+            <a
+              href={link.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 rounded-lg bg-accent px-6 py-3 text-sm font-semibold text-background hover:bg-accent-hover transition-colors"
+            >
+              Abrir filecrypt.cc
+              <ArrowRight className="h-4 w-4" />
+            </a>
+          </div>
+
+          <Link
+            href={`/games/${link.game.slug}`}
+            className="inline-flex items-center gap-2 text-gray-500 hover:text-white text-sm transition-colors"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Volver al juego
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
   // MegaDB: redirect to SteamRip page (MegaDB requires SteamRip referrer)
   if (host === "megadb") {
     const steamripUrl = `https://steamrip.com/${link.game.slug}-free-download/`;

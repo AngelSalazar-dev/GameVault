@@ -32,7 +32,7 @@ model Game {
   releaseYear       Int?
   developer         String?
   publisher         String?
-  coverImage        String?
+  coverImage        String?        @db.VarChar(500)
   screenshots       Json?
   fileSize          String?
   systemRequirements Json?
@@ -63,6 +63,8 @@ model DownloadLink {
   url       String     @db.Text
   host      String?
   fileSize  String?
+  password  String?
+  source    String?
   isActive  Boolean    @default(true)
   createdAt DateTime   @default(now())
   game      Game       @relation(fields: [gameId], references: [id], onDelete: Cascade)

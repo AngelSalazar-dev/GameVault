@@ -166,7 +166,7 @@ export default async function GamePage({
               <div className="space-y-2">
                 {game.downloadLinks
                   .filter((link: { isActive: boolean }) => link.isActive)
-                  .map((link: { id: string; url: string; host?: string; fileSize?: string }) => (
+                  .map((link: { id: string; url: string; host?: string; fileSize?: string; password?: string | null }) => (
                     <a
                       key={link.id}
                       href={`/download/${link.id}`}
@@ -177,6 +177,11 @@ export default async function GamePage({
                         <span className="text-sm font-medium">
                           {link.host || "Download"}
                         </span>
+                        {link.password && (
+                          <span className="text-xs text-yellow-500 bg-yellow-500/10 px-1.5 py-0.5 rounded">
+                            PW: {link.password}
+                          </span>
+                        )}
                       </div>
                       {link.fileSize && (
                         <span className="text-xs text-muted-foreground">

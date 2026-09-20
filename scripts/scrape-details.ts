@@ -1,6 +1,7 @@
 import puppeteer from "puppeteer";
 import * as cheerio from "cheerio";
 import fs from "fs";
+import { normalizeGenre } from "./lib/normalize";
 
 const BASE_URL = "https://steamrip.com";
 
@@ -92,7 +93,7 @@ async function main() {
             : `${BASE_URL}/${detailCover}`
           : game.coverImage,
         downloadLinks,
-        genre: gameInfo["genre"],
+        genre: normalizeGenre(gameInfo["genre"]),
         developer: gameInfo["developer"],
         fileSize: gameInfo["game size"] || game.fileSize,
       });

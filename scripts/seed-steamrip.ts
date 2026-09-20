@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import fs from "fs";
+import { normalizeGenre } from "./lib/normalize";
 
 const prisma = new PrismaClient();
 
@@ -44,7 +45,7 @@ async function main() {
         slug,
         description: `${game.title} - Pre-installed PC game from SteamRip.`,
         platform: "pc",
-        genre: game.genre || "Action",
+        genre: normalizeGenre(game.genre),
         releaseYear: game.year || null,
         developer: game.developer || null,
         publisher: null,
@@ -64,7 +65,7 @@ async function main() {
           data: {
             coverImage: game.coverImage || existing.coverImage,
             fileSize: game.fileSize || existing.fileSize,
-            genre: game.genre || existing.genre,
+            genre: normalizeGenre(game.genre || existing.genre),
             developer: game.developer || existing.developer,
             source: "steamrip",
           },

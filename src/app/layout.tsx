@@ -18,6 +18,9 @@ export const metadata: Metadata = {
   title: "GameVault - Free Games Library",
   description:
     "Your ultimate vault for free PC games and classic console ROMs. Browse, download, and preserve gaming history.",
+  icons: {
+    icon: "/favicon.ico",
+  },
 };
 
 export default function RootLayout({

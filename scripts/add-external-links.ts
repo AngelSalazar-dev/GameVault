@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import { normalizeGenre } from "./lib/normalize";
 
 const prisma = new PrismaClient();
 
@@ -13,7 +14,7 @@ async function main() {
       title: "Hollow Knight",
       slug: "hollow-knight",
       description: "Un épico juego de acción y aventuras en un mundo de insectos subterráneos.",
-      genre: "ACTION",
+      genre: normalizeGenre("action"),
       platform: "PC",
       developer: "Team Cherry",
       releaseYear: 2017,
@@ -42,7 +43,7 @@ async function main() {
       title: "BIOS PS2 (Para emuladores)",
       slug: "bios-ps2",
       description: "Archivos BIOS necesarios para emular PlayStation 2 en PCSX2.",
-      genre: "UTILITY",
+      genre: normalizeGenre("utility"),
       platform: "PS2",
       developer: "Sony",
       releaseYear: 2000,
@@ -71,7 +72,7 @@ async function main() {
       title: "Colección ROMs Nintendo DS",
       slug: "roms-nds",
       description: "Pack completo de ROMs para Nintendo DS.",
-      genre: "COLLECTION",
+      genre: normalizeGenre("collection"),
       platform: "NDS",
       developer: "Nintendo",
       releaseYear: 2004,
@@ -100,7 +101,7 @@ async function main() {
       title: "Colección ROMs Nintendo 64",
       slug: "roms-n64",
       description: "Pack de ROMs para Nintendo 64.",
-      genre: "COLLECTION",
+      genre: normalizeGenre("collection"),
       platform: "N64",
       developer: "Nintendo",
       releaseYear: 1996,
@@ -129,7 +130,7 @@ async function main() {
       title: "Pack ROMs GBA en Español",
       slug: "roms-gba",
       description: "Pack de ROMs de Game Boy Advance traducidos al español.",
-      genre: "COLLECTION",
+      genre: normalizeGenre("collection"),
       platform: "GBA",
       developer: "Nintendo",
       releaseYear: 2001,
@@ -158,7 +159,7 @@ async function main() {
       title: "Colección ROMs Super Nintendo",
       slug: "roms-snes",
       description: "Pack de ROMs para Super Nintendo.",
-      genre: "COLLECTION",
+      genre: normalizeGenre("collection"),
       platform: "SNES",
       developer: "Nintendo",
       releaseYear: 1990,
@@ -187,7 +188,7 @@ async function main() {
       title: "Pack de Juegos (Google Drive)",
       slug: "pack-juegos-google-drive",
       description: "Carpeta con múltiples juegos en Google Drive.",
-      genre: "COLLECTION",
+      genre: normalizeGenre("collection"),
       platform: "PC",
       developer: "Varios",
       releaseYear: 2024,
