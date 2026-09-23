@@ -13,6 +13,14 @@ import {
 import Link from "next/link";
 import { Decimal } from "@prisma/client/runtime/library";
 
+function formatBytes(bytes: number): string {
+  if (bytes === 0) return "0 B";
+  const k = 1024;
+  const sizes = ["B", "KB", "MB", "GB", "TB"];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
+}
+
 const platformLabels: Record<string, string> = {
   pc: "PC",
   ps1: "PlayStation 1",
@@ -51,6 +59,7 @@ export default async function GamePage({
       where: { slug },
       include: {
         downloadLinks: true,
+        telegramFiles: true,
         collections: {
           include: { collection: true },
         },
@@ -195,6 +204,30 @@ export default async function GamePage({
               <p className="text-sm text-muted-foreground">
                 No download links available yet.
               </p>
+            )}
+            {game.telegramFiles && game.telegramFiles.length > 0 && (
+              <div className="space-y-2 pt-4 border-t border-border">
+                <p className="text-xs text-muted-foreground uppercase tracking-wider">Telegram</p>
+                {game.telegramFiles
+                  .map((tf: { id: string; fileName: string; fileSize: string | number; channel: string }) => (
+                    <a
+                      key={tf.id}
+                      href={`/api/telegram-download/${tf.id}`}
+                      className="flex items-center justify-between rounded-lg border border-border p-3 hover:border-accent hover:bg-accent/5 transition-colors"
+                    >
+                      <div className="flex items-center gap-2">
+                        <ExternalLink className="h-4 w-4" />
+                        <span className="text-sm font-medium">Telegram</span>
+                        <span className="text-xs text-blue-500 bg-blue-500/10 px-1.5 py-0.5 rounded">
+                          {tf.channel}
+                        </span>
+                      </div>
+                      <span className="text-xs text-muted-foreground">
+                        {typeof tf.fileSize === "bigint" ? formatBytes(Number(tf.fileSize)) : tf.fileSize}
+                      </span>
+                    </a>
+                  ))}
+              </div>
             )}
           </div>
 

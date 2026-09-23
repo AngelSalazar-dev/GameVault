@@ -43,6 +43,7 @@ model Game {
   createdAt         DateTime       @default(now())
   updatedAt         DateTime       @updatedAt
   downloadLinks     DownloadLink[]
+  telegramFiles     TelegramFile[]
   collections       GameCollection[]
   ratings           Rating[]
   comments          Comment[]
@@ -70,6 +71,21 @@ model DownloadLink {
   game      Game       @relation(fields: [gameId], references: [id], onDelete: Cascade)
 
   @@index([gameId])
+}
+
+model TelegramFile {
+  id          String   @id @default(cuid())
+  gameId      String
+  game        Game     @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  channel     String
+  messageId   Int
+  fileName    String
+  fileSize    BigInt
+  platform    String
+  createdAt   DateTime @default(now())
+
+  @@index([gameId])
+  @@index([platform])
 }
 
 model Collection {

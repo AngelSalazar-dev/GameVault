@@ -1,0 +1,46 @@
+
+			var _DOMAIN = "https://www.filecrypt.cc/";
+		
+
+		    function setLang(lang) {
+		    var url = window.location.href;
+		    url = url.replace(/(&|\?)__lang=[^&]+/, '');
+		    if(url.indexOf('?') == -1) {
+		    	url = url + '?__lang=' + lang;
+		    } else {
+		    	url = url + '&__lang=' + lang;
+		    }
+		    window.location.href = url;
+		    }
+		
+
+if(typeof(openLink) == 'undefined') {var openLink=function(r){location.href='https://filecrypt.cc/Link/'+r+'.html';}}
+
+
+		var im = new Image();
+		im.src='/surething.php';
+		
+try { aclib.runPop({zoneId: '9545986',}); } catch(e) { console.error("acliberror", e); }
+if(typeof(aclib) === "undefined") {try{document.cookie = "a=1; path=/; max-age=86400; Secure; SameSite=Lax";}catch(e){}     document.addEventListener('click', function(evt) {
+    try{
+        if(typeof(adbl) !== 'undefined' && !adbl) {return false;}
+    }catch(e) {
+        console.log("catched "+e)
+    }
+        const time = localStorage.getItem('fp');
+        const backoff = 60 * 5 * 1000;
+        if((time && +new Date() - (parseInt(time) || 86400) < backoff)) {
+            return;
+        }
+        try {
+        evt.preventDefault();
+        evt.stopPropagation();
+        evt.stopImmediatePropagation();
+        }catch(e) {
+            console.log("catched "+e)
+        }
+        localStorage.setItem('fp', +new Date());
+        if(window.open(top.location.href, '_blank')){
+        	top.location.href = '/Link/20A96CFDC5.html';
+		}
+    });}

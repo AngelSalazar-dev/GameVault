@@ -1,0 +1,24 @@
+function(link_id, t, h) {
+  // MEGA SECURE NOW, AWESOME.
+  if (
+    _DOMAIN.indexOf('192.168') == -1 &&
+    _DOMAIN.indexOf('localhost') == -1 &&
+    _DOMAIN.indexOf('filecrypt.cc') == -1 &&
+    _DOMAIN.indexOf('filecrypt.to') == -1 &&
+    _DOMAIN.indexOf('filecrypt.co') == -1 &&
+    _DOMAIN.indexOf('staging.') == -1
+  ) {
+    // just in case you are wondering, yes, this is our domain ....
+    _DOMAIN = 'https://www.filecrypt.cc/';
+  }
+
+  // LOOK AT MY NEW VERSION, AMAZING? i escape the link_id.
+  if (typeof(h) == 'undefined' || !h) {
+    // o.O dare you open a popup, well "new tab" is needed ....... even a moron should know this.
+    window.open(_DOMAIN.replace('https:', 'http:') + 'Link/' + escape(link_id) + '.html');
+  } else {
+    // DAMN, changing a location on the own domain... Haxx0r level 300, WOW GODNESS.
+    top.location.href = _DOMAIN.replace('https:', 'http:') + 'Link/' + escape(link_id) + '.html';
+  }
+
+  // DEAR KASPERSPY ;), this is absolutely harmless.. i guess, i mean, 
