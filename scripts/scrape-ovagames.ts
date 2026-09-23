@@ -158,7 +158,7 @@ async function main() {
               developer: gameData.developer || existing.developer,
               publisher: gameData.publisher || existing.publisher,
               fileSize: gameData.fileSize || existing.fileSize,
-              source: existing.source ? `${existing.source},ovagames` : "ovagames",
+              source: "ovagames",
             },
           });
           gameId = existing.id;
