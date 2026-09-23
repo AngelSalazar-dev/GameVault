@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { Star, Download, Monitor, Gamepad2 } from "lucide-react";
+import { Star, Download } from "lucide-react";
+import CoverImage from "./CoverImage";
 
 interface GameCardProps {
   id: string;
@@ -52,17 +53,12 @@ export default function GameCard({
     <Link href={`/games/${slug}`} className="group">
       <div className="relative overflow-hidden rounded-lg border border-border bg-card transition-all hover:border-accent hover:shadow-lg hover:shadow-accent/10">
         <div className="aspect-[3/4] relative overflow-hidden bg-muted">
-          {coverImage ? (
-            <img
-              src={coverImage}
-              alt={title}
-              className="h-full w-full object-cover transition-transform group-hover:scale-105"
-            />
-          ) : (
-            <div className="flex h-full items-center justify-center">
-              <Gamepad2 className="h-12 w-12 text-muted-foreground/30" />
-            </div>
-          )}
+          <CoverImage
+            src={coverImage}
+            alt={title}
+            className="h-full w-full object-cover transition-transform group-hover:scale-105"
+            iconClassName="h-12 w-12"
+          />
           <div className="absolute top-2 right-2">
             <span
               className={`inline-flex items-center rounded px-1.5 py-0.5 text-xs font-medium ${platformColors[platform] || "bg-gray-500/20 text-gray-400"}`}

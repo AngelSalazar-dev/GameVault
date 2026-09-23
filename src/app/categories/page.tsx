@@ -1,7 +1,8 @@
 import Link from "next/link";
-import { Gamepad2, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { db } from "@/lib/db";
 import { CATEGORIES } from "@/lib/constants";
+import CoverImage from "@/components/games/CoverImage";
 
 export const dynamic = "force-dynamic";
 
@@ -68,17 +69,12 @@ export default async function CategoriesPage() {
                 <div className={`grid grid-cols-2 gap-0.5 bg-gradient-to-br ${cat.color} p-0.5`}>
                   {[0, 1, 2, 3].map((i) => (
                     <div key={i} className="aspect-square bg-muted/50 overflow-hidden">
-                      {preview[i]?.coverImage ? (
-                        <img
-                          src={preview[i].coverImage}
-                          alt=""
-                          className="h-full w-full object-cover opacity-80 group-hover:opacity-100 transition-opacity"
-                        />
-                      ) : (
-                        <div className="flex h-full items-center justify-center">
-                          <Gamepad2 className="h-4 w-4 text-muted-foreground/20" />
-                        </div>
-                      )}
+                      <CoverImage
+                        src={preview[i]?.coverImage}
+                        alt=""
+                        className="h-full w-full object-cover opacity-80 group-hover:opacity-100 transition-opacity"
+                        iconClassName="h-4 w-4"
+                      />
                     </div>
                   ))}
                 </div>

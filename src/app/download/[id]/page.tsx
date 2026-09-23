@@ -1,6 +1,7 @@
 import { db } from "@/lib/db";
 import { Download, ArrowLeft, ExternalLink, ArrowRight } from "lucide-react";
 import Link from "next/link";
+import CoverImage from "@/components/games/CoverImage";
 
 export const dynamic = "force-dynamic";
 
@@ -34,13 +35,12 @@ export default async function DownloadPage({ params }: { params: Promise<{ id: s
     return (
       <div className="flex min-h-screen items-center justify-center bg-[#0a0a0f] px-4">
         <div className="text-center space-y-6 max-w-md mx-auto">
-          {link.game.coverImage && (
-            <img
-              src={link.game.coverImage}
-              alt={link.game.title}
-              className="w-32 h-44 object-cover rounded-lg mx-auto shadow-lg shadow-accent/10"
-            />
-          )}
+          <CoverImage
+            src={link.game.coverImage}
+            alt={link.game.title}
+            className="w-32 h-44 object-cover rounded-lg mx-auto shadow-lg shadow-accent/10"
+            iconClassName="h-10 w-10"
+          />
           <div className="space-y-2">
             <h1 className="text-xl font-bold text-white">{link.game.title}</h1>
             <p className="text-gray-400 text-sm">
@@ -81,13 +81,12 @@ export default async function DownloadPage({ params }: { params: Promise<{ id: s
     return (
       <div className="flex min-h-screen items-center justify-center bg-[#0a0a0f] px-4">
         <div className="text-center space-y-6 max-w-md mx-auto">
-          {link.game.coverImage && (
-            <img
-              src={link.game.coverImage}
-              alt={link.game.title}
-              className="w-32 h-44 object-cover rounded-lg mx-auto shadow-lg shadow-accent/10"
-            />
-          )}
+          <CoverImage
+            src={link.game.coverImage}
+            alt={link.game.title}
+            className="w-32 h-44 object-cover rounded-lg mx-auto shadow-lg shadow-accent/10"
+            iconClassName="h-10 w-10"
+          />
           <div className="space-y-2">
             <h1 className="text-xl font-bold text-white">{link.game.title}</h1>
             <p className="text-gray-400 text-sm">
@@ -141,13 +140,12 @@ export default async function DownloadPage({ params }: { params: Promise<{ id: s
     return (
       <div className="flex min-h-screen items-center justify-center bg-[#0a0a0f] px-4">
         <div className="text-center space-y-6 max-w-md mx-auto">
-          {link.game.coverImage && (
-            <img
-              src={link.game.coverImage}
-              alt={link.game.title}
-              className="w-32 h-44 object-cover rounded-lg mx-auto shadow-lg shadow-accent/10"
-            />
-          )}
+          <CoverImage
+            src={link.game.coverImage}
+            alt={link.game.title}
+            className="w-32 h-44 object-cover rounded-lg mx-auto shadow-lg shadow-accent/10"
+            iconClassName="h-10 w-10"
+          />
           <div className="space-y-2">
             <h1 className="text-xl font-bold text-white">{link.game.title}</h1>
             <p className="text-gray-400 text-sm">
@@ -196,13 +194,12 @@ export default async function DownloadPage({ params }: { params: Promise<{ id: s
       </head>
       <body className="flex min-h-screen items-center justify-center bg-[#0a0a0f]">
         <div className="text-center space-y-6 max-w-md mx-auto px-4">
-          {link.game.coverImage && (
-            <img
-              src={link.game.coverImage}
-              alt={link.game.title}
-              className="w-32 h-44 object-cover rounded-lg mx-auto shadow-lg shadow-accent/10"
-            />
-          )}
+          <CoverImage
+            src={link.game.coverImage}
+            alt={link.game.title}
+            className="w-32 h-44 object-cover rounded-lg mx-auto shadow-lg shadow-accent/10"
+            iconClassName="h-10 w-10"
+          />
           <div className="space-y-2">
             <h1 className="text-xl font-bold text-white">{link.game.title}</h1>
             <p className="text-gray-400 text-sm">

@@ -1,7 +1,8 @@
 import Link from "next/link";
-import { Gamepad2, HardDrive, ArrowRight, Download, Star } from "lucide-react";
+import { Gamepad2, HardDrive, ArrowRight, Download } from "lucide-react";
 import { db } from "@/lib/db";
 import { HOME_CATEGORIES } from "@/lib/constants";
+import CoverImage from "@/components/games/CoverImage";
 
 async function getRecentGames() {
   try {
@@ -149,17 +150,12 @@ export default async function Home() {
               >
                 <div className="relative overflow-hidden rounded-lg border border-border bg-card transition-all hover:border-accent hover:shadow-lg hover:shadow-accent/10">
                   <div className="aspect-[3/4] relative overflow-hidden bg-muted">
-                    {game.coverImage ? (
-                      <img
-                        src={game.coverImage}
-                        alt={game.title}
-                        className="h-full w-full object-cover transition-transform group-hover:scale-105"
-                      />
-                    ) : (
-                      <div className="flex h-full items-center justify-center">
-                        <Gamepad2 className="h-8 w-8 text-muted-foreground/30" />
-                      </div>
-                    )}
+                    <CoverImage
+                      src={game.coverImage}
+                      alt={game.title}
+                      className="h-full w-full object-cover transition-transform group-hover:scale-105"
+                      iconClassName="h-8 w-8"
+                    />
                   </div>
                   <div className="p-2 space-y-1">
                     <h3 className="font-medium text-xs line-clamp-2 group-hover:text-accent transition-colors">
@@ -233,17 +229,12 @@ export default async function Home() {
                 >
                   <div className="relative overflow-hidden rounded-lg border border-border bg-card transition-all hover:border-accent">
                     <div className="aspect-[3/4] overflow-hidden bg-muted">
-                      {game.coverImage ? (
-                        <img
-                          src={game.coverImage}
-                          alt={game.title}
-                          className="h-full w-full object-cover transition-transform group-hover:scale-105"
-                        />
-                      ) : (
-                        <div className="flex h-full items-center justify-center">
-                          <Gamepad2 className="h-6 w-6 text-muted-foreground/30" />
-                        </div>
-                      )}
+                      <CoverImage
+                        src={game.coverImage}
+                        alt={game.title}
+                        className="h-full w-full object-cover transition-transform group-hover:scale-105"
+                        iconClassName="h-6 w-6"
+                      />
                     </div>
                     <div className="p-2">
                       <h4 className="text-xs font-medium line-clamp-2 group-hover:text-accent">

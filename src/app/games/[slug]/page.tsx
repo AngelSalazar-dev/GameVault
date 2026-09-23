@@ -11,15 +11,8 @@ import {
   ExternalLink,
 } from "lucide-react";
 import Link from "next/link";
-import { Decimal } from "@prisma/client/runtime/library";
-
-function formatBytes(bytes: number): string {
-  if (bytes === 0) return "0 B";
-  const k = 1024;
-  const sizes = ["B", "KB", "MB", "GB", "TB"];
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
-}
+import CoverImage from "@/components/games/CoverImage";
+import type { DownloadLink, Game } from "@prisma/client";
 
 const platformLabels: Record<string, string> = {
   pc: "PC",
@@ -53,7 +46,7 @@ export default async function GamePage({
 }) {
   const { slug } = await params;
 
-  let game: any = null;
+  let game: (Game & { downloadLinks: DownloadLink[] }) | null = null;
   try {
     game = await db.game.findUnique({
       where: { slug },
@@ -83,17 +76,12 @@ export default async function GamePage({
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-6">
           <div className="relative aspect-video overflow-hidden rounded-lg bg-card">
-            {game.coverImage ? (
-              <img
-                src={game.coverImage}
-                alt={game.title}
-                className="h-full w-full object-cover"
-              />
-            ) : (
-              <div className="flex h-full items-center justify-center">
-                <Monitor className="h-24 w-24 text-muted-foreground/30" />
-              </div>
-            )}
+            <CoverImage
+              src={game.coverImage}
+              alt={game.title}
+              className="h-full w-full object-cover"
+              iconClassName="h-24 w-24"
+            />
           </div>
 
           <div>
@@ -169,8 +157,8 @@ export default async function GamePage({
             {game.downloadLinks.length > 0 ? (
               <div className="space-y-2">
                 {game.downloadLinks
-                  .filter((link: { isActive: boolean }) => link.isActive)
-                  .map((link: { id: string; url: string; host?: string; fileSize?: string; password?: string | null }) => (
+                  .filter((link) => link.isActive)
+                  .map((link) => (
                     <a
                       key={link.id}
                       href={`/download/${link.id}`}

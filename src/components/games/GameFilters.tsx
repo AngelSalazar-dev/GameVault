@@ -137,18 +137,46 @@ export default function GameFilters({ platforms, genres }: GameFiltersProps) {
               </select>
             </div>
           </div>
+        </div>
+      )}
 
-          {(currentPlatform || currentGenre) && (
-            <button
-              onClick={() => {
-                updateParams("platform", "");
-                updateParams("genre", "");
-              }}
-              className="text-sm text-accent hover:underline"
-            >
-              Clear all filters
-            </button>
+      {(currentPlatform || currentGenre) && (
+        <div className="flex flex-wrap items-center gap-2">
+          {currentPlatform && (
+            <span className="inline-flex items-center gap-1 rounded-full border border-accent/30 bg-accent/10 px-3 py-1 text-xs text-accent">
+              {platformLabels[currentPlatform] || currentPlatform.toUpperCase()}
+              <button
+                onClick={() => updateParams("platform", "")}
+                aria-label="Remove platform filter"
+                className="hover:text-white"
+              >
+                <X className="h-3 w-3" />
+              </button>
+            </span>
           )}
+          {currentGenre && (
+            <span className="inline-flex items-center gap-1 rounded-full border border-accent/30 bg-accent/10 px-3 py-1 text-xs text-accent">
+              {currentGenre}
+              <button
+                onClick={() => updateParams("genre", "")}
+                aria-label="Remove genre filter"
+                className="hover:text-white"
+              >
+                <X className="h-3 w-3" />
+              </button>
+            </span>
+          )}
+          <button
+            onClick={() => {
+              const params = new URLSearchParams(searchParams.toString());
+              params.delete("platform");
+              params.delete("genre");
+              router.push(`/games?${params.toString()}`);
+            }}
+            className="text-xs text-muted-foreground hover:text-accent hover:underline"
+          >
+            Clear all
+          </button>
         </div>
       )}
     </div>
