@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { Search, Menu, X, Gamepad2, HardDrive, Grid3X3 } from "lucide-react";
+import { Search, Menu, X, Gamepad2, HardDrive, Grid3X3, Home } from "lucide-react";
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -18,6 +18,13 @@ export default function Header() {
         </Link>
 
         <nav className="hidden md:flex items-center gap-6">
+          <Link
+            href="/"
+            className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <Home className="h-4 w-4" />
+            Home
+          </Link>
           <Link
             href="/games"
             className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors"
@@ -65,6 +72,14 @@ export default function Header() {
       {mobileMenuOpen && (
         <div className="md:hidden border-t border-border bg-background">
           <nav className="flex flex-col p-4 gap-3">
+            <Link
+              href="/"
+              className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm hover:bg-card transition-colors"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              <Home className="h-4 w-4" />
+              Home
+            </Link>
             <Link
               href="/games"
               className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm hover:bg-card transition-colors"
