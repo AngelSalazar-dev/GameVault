@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { Search, Menu, X, Gamepad2, HardDrive, Grid3X3, Home } from "lucide-react";
+import { Search, Menu, X, Gamepad2, HardDrive, Grid3X3, Home, MessageSquare } from "lucide-react";
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -44,6 +44,13 @@ export default function Header() {
             className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors"
           >
             Platforms
+          </Link>
+          <Link
+            href="/community"
+            className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <MessageSquare className="h-4 w-4" />
+            Community
           </Link>
         </nav>
 
@@ -102,6 +109,14 @@ export default function Header() {
               onClick={() => setMobileMenuOpen(false)}
             >
               Platforms
+            </Link>
+            <Link
+              href="/community"
+              className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm hover:bg-card transition-colors"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              <MessageSquare className="h-4 w-4" />
+              Community
             </Link>
           </nav>
         </div>

@@ -88,6 +88,15 @@ export default async function AdminPage() {
                 Review and approve scraped games
               </div>
             </Link>
+            <Link
+              href="/admin/requests"
+              className="block rounded-lg border border-border p-3 hover:border-accent hover:bg-accent/5 transition-colors"
+            >
+              <div className="font-medium">Game Requests</div>
+              <div className="text-sm text-muted-foreground">
+                Approve, fulfill, or remove community requests
+              </div>
+            </Link>
           </div>
         </div>
 

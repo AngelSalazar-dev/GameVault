@@ -159,19 +159,21 @@ model Favorite {
 }
 
 model Request {
-  id        String      @id @default(cuid())
-  title     String
-  platform  String?
-  description String?   @db.Text
-  userId    String?
-  status    RequestStatus @default(pending)
-  votes     Int         @default(0)
-  createdAt DateTime    @default(now())
-  user      User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
-  game      Game?       @relation(fields: [gameId], references: [id], onDelete: SetNull)
-  gameId    String?
+  id          String        @id @default(cuid())
+  title       String
+  platform    String?
+  description String?       @db.Text
+  authorName  String?
+  userId      String?
+  status      RequestStatus @default(pending)
+  votes       Int           @default(0)
+  createdAt   DateTime      @default(now())
+  user        User?         @relation(fields: [userId], references: [id], onDelete: SetNull)
+  game        Game?         @relation(fields: [gameId], references: [id], onDelete: SetNull)
+  gameId      String?
 
   @@index([status])
+  @@index([votes])
 }
 
 model ScrapingQueue {
