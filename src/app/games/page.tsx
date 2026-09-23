@@ -3,7 +3,7 @@ import { db } from "@/lib/db";
 import GameGrid from "@/components/games/GameGrid";
 import GameFilters from "@/components/games/GameFilters";
 import Link from "next/link";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react";
 
 interface Game {
   id: string;
@@ -135,6 +135,23 @@ function buildPageUrl(params: Record<string, string | undefined>, page: number):
   return `/games?${sp.toString()}`;
 }
 
+function getPageItems(current: number, total: number): (number | "gap")[] {
+  if (total <= 7) {
+    return Array.from({ length: total }, (_, i) => i + 1);
+  }
+
+  const items: (number | "gap")[] = [1];
+  const start = Math.max(2, current - 1);
+  const end = Math.min(total - 1, current + 1);
+
+  if (start > 2) items.push("gap");
+  for (let i = start; i <= end; i++) items.push(i);
+  if (end < total - 1) items.push("gap");
+
+  items.push(total);
+  return items;
+}
+
 export default async function GamesPage({
   searchParams,
 }: {
@@ -178,28 +195,90 @@ export default async function GamesPage({
       <GameGrid games={games} />
 
       {totalPages > 1 && (
-        <nav className="flex items-center justify-center gap-2 pt-4">
-          {page > 1 && (
-            <Link
-              href={buildPageUrl(filterParams, page - 1)}
-              className="flex items-center gap-1 rounded-lg border border-border px-3 py-2 text-sm hover:border-accent hover:text-accent transition-colors"
-            >
-              <ChevronLeft className="h-4 w-4" />
-              Prev
-            </Link>
-          )}
-          <span className="text-sm text-muted-foreground px-3">
+        <nav
+          aria-label="Pagination"
+          className="flex flex-wrap items-center justify-center gap-1.5 pt-4"
+        >
+          <Link
+            href={buildPageUrl(filterParams, 1)}
+            aria-disabled={page === 1}
+            className={`flex items-center gap-1 rounded-lg border px-3 py-2 text-sm transition-colors ${
+              page === 1
+                ? "pointer-events-none border-border/50 text-muted-foreground/40"
+                : "border-border hover:border-accent hover:text-accent"
+            }`}
+          >
+            <ChevronsLeft className="h-4 w-4" />
+            <span className="hidden sm:inline">First</span>
+          </Link>
+          <Link
+            href={buildPageUrl(filterParams, Math.max(1, page - 1))}
+            aria-disabled={page === 1}
+            className={`flex items-center gap-1 rounded-lg border px-3 py-2 text-sm transition-colors ${
+              page === 1
+                ? "pointer-events-none border-border/50 text-muted-foreground/40"
+                : "border-border hover:border-accent hover:text-accent"
+            }`}
+          >
+            <ChevronLeft className="h-4 w-4" />
+            <span className="hidden sm:inline">Prev</span>
+          </Link>
+
+          <div className="flex items-center gap-1.5 mx-1">
+            {getPageItems(page, totalPages).map((item, i) =>
+              item === "gap" ? (
+                <span
+                  key={`gap-${i}`}
+                  className="px-1.5 text-sm text-muted-foreground"
+                  aria-hidden
+                >
+                  …
+                </span>
+              ) : (
+                <Link
+                  key={item}
+                  href={buildPageUrl(filterParams, item)}
+                  aria-current={item === page ? "page" : undefined}
+                  className={`min-w-[2.25rem] rounded-lg border px-2 py-2 text-center text-sm transition-colors ${
+                    item === page
+                      ? "border-accent bg-accent/10 font-semibold text-accent"
+                      : "border-border hover:border-accent hover:text-accent"
+                  }`}
+                >
+                  {item}
+                </Link>
+              )
+            )}
+          </div>
+
+          <Link
+            href={buildPageUrl(filterParams, Math.min(totalPages, page + 1))}
+            aria-disabled={page === totalPages}
+            className={`flex items-center gap-1 rounded-lg border px-3 py-2 text-sm transition-colors ${
+              page === totalPages
+                ? "pointer-events-none border-border/50 text-muted-foreground/40"
+                : "border-border hover:border-accent hover:text-accent"
+            }`}
+          >
+            <span className="hidden sm:inline">Next</span>
+            <ChevronRight className="h-4 w-4" />
+          </Link>
+          <Link
+            href={buildPageUrl(filterParams, totalPages)}
+            aria-disabled={page === totalPages}
+            className={`flex items-center gap-1 rounded-lg border px-3 py-2 text-sm transition-colors ${
+              page === totalPages
+                ? "pointer-events-none border-border/50 text-muted-foreground/40"
+                : "border-border hover:border-accent hover:text-accent"
+            }`}
+          >
+            <span className="hidden sm:inline">Last</span>
+            <ChevronsRight className="h-4 w-4" />
+          </Link>
+
+          <span className="w-full sm:w-auto sm:ml-3 text-center text-sm text-muted-foreground">
             Page {page} of {totalPages.toLocaleString()}
           </span>
-          {page < totalPages && (
-            <Link
-              href={buildPageUrl(filterParams, page + 1)}
-              className="flex items-center gap-1 rounded-lg border border-border px-3 py-2 text-sm hover:border-accent hover:text-accent transition-colors"
-            >
-              Next
-              <ChevronRight className="h-4 w-4" />
-            </Link>
-          )}
         </nav>
       )}
     </div>
