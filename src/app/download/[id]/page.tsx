@@ -29,6 +29,53 @@ export default async function DownloadPage({ params }: { params: Promise<{ id: s
 
   const host = link.host?.toLowerCase() || "";
 
+  // hShop: show page URL — user completes Turnstile captcha on hShop
+  if (host === "hshop") {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-[#0a0a0f] px-4">
+        <div className="text-center space-y-6 max-w-md mx-auto">
+          {link.game.coverImage && (
+            <img
+              src={link.game.coverImage}
+              alt={link.game.title}
+              className="w-32 h-44 object-cover rounded-lg mx-auto shadow-lg shadow-accent/10"
+            />
+          )}
+          <div className="space-y-2">
+            <h1 className="text-xl font-bold text-white">{link.game.title}</h1>
+            <p className="text-gray-400 text-sm">
+              Descarga disponible en <span className="text-accent font-medium">hShop</span>
+              {link.fileSize && <span className="text-gray-500"> &middot; {link.fileSize}</span>}
+            </p>
+          </div>
+
+          <div className="rounded-lg border border-accent/20 bg-accent/5 p-4 space-y-3">
+            <p className="text-sm text-gray-300">
+              Para descargar, abre la p&aacute;gina de hShop y completa la verificaci&oacute;n de seguridad (captcha). Despu&eacute;s ver&aacute;s el bot&oacute;n de descarga directa (.cia).
+            </p>
+            <a
+              href={link.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 rounded-lg bg-accent px-6 py-3 text-sm font-semibold text-background hover:bg-accent-hover transition-colors"
+            >
+              Abrir hShop
+              <ArrowRight className="h-4 w-4" />
+            </a>
+          </div>
+
+          <Link
+            href={`/games/${link.game.slug}`}
+            className="inline-flex items-center gap-2 text-gray-500 hover:text-white text-sm transition-colors"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Volver al juego
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
   // Filecrypt: show URL + password for manual captcha solving
   if (host === "filecrypt") {
     return (

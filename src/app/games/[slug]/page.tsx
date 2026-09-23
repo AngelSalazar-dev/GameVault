@@ -181,6 +181,11 @@ export default async function GamePage({
                         <span className="text-sm font-medium">
                           {link.host || "Download"}
                         </span>
+                        {(link.host === "hshop" || link.host === "filecrypt") && (
+                          <span className="text-xs text-yellow-500 bg-yellow-500/10 px-1.5 py-0.5 rounded">
+                            captcha
+                          </span>
+                        )}
                         {link.password && (
                           <span className="text-xs text-yellow-500 bg-yellow-500/10 px-1.5 py-0.5 rounded">
                             PW: {link.password}
