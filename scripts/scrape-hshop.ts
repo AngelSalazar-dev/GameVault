@@ -1,5 +1,6 @@
 import * as cheerio from "cheerio";
 import { db } from "../src/lib/db";
+import { inferGenreFromTitle } from "./lib/normalize";
 
 const BASE = "https://hshop.erista.me";
 const UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36";
@@ -191,7 +192,7 @@ async function importGames(hshopGames: HshopGame[]): Promise<{ created: number; 
       slug: uniqueSlug,
       description: `${g.title} - Nintendo 3DS CIA${g.region ? ` (${g.region})` : ""}`,
       platform: "3ds",
-      genre: "action",
+      genre: inferGenreFromTitle(g.title),
       fileSize: g.size || null,
       source: "hshop",
       status: "active" as const,

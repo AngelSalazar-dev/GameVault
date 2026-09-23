@@ -20,7 +20,7 @@ async function main() {
   console.log("TOTAL:", counts.reduce((a, b) => a + b._count.id, 0));
 
   // Check the expected slugs
-  const slugs = ["action","adventure","anime","building","horror","indie","multiplayer","open-world","racing","role-playing-game","simulation","sports","strategy","survival","virtual-reality","first-person-shooter"];
+  const slugs = ["action","adventure","role-playing-game","platformer","fighting","shooter","racing","puzzle","strategy","sports","simulation","indie","visual-novel","survival","horror","building","anime"];
   const dbGenres = new Set(counts.map(c => c.genre));
   console.log("\nMISSING FROM DB (slug not found):");
   for (const s of slugs) {

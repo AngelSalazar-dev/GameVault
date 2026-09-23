@@ -9,18 +9,18 @@ const CATEGORIES = [
   "adventure",
   "anime",
   "building",
-  "first-person-shooter",
+  "shooter",
   "horror",
   "indie",
-  "multiplayer",
-  "open-world",
   "racing",
   "role-playing-game",
   "simulation",
   "sports",
   "strategy",
   "survival",
-  "virtual-reality",
+  "fighting",
+  "platformer",
+  "puzzle",
 ];
 
 interface GameEntry {
