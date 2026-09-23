@@ -4,7 +4,6 @@ import {
   Database,
   Gamepad2,
   ClipboardList,
-  BookOpen,
   TrendingUp,
 } from "lucide-react";
 import Link from "next/link";
@@ -13,19 +12,17 @@ export const dynamic = "force-dynamic";
 
 async function getStats() {
   try {
-    const [games, collections, manuals, requests, pendingScraping] =
+    const [games, requests, pendingScraping] =
       await Promise.all([
         db.game.count({ where: { status: "active" } }),
-        db.collection.count(),
-        db.manual.count(),
         db.request.count(),
         db.scrapingQueue.count({ where: { status: "pending" } }),
       ]);
 
-    return { games, collections, manuals, requests, pendingScraping };
+    return { games, requests, pendingScraping };
   } catch (error) {
     console.error("Database error:", error);
-    return { games: 0, collections: 0, manuals: 0, requests: 0, pendingScraping: 0 };
+    return { games: 0, requests: 0, pendingScraping: 0 };
   }
 }
 
@@ -42,7 +39,7 @@ export default async function AdminPage() {
         <p className="text-muted-foreground">Manage your GameVault</p>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
         <div className="rounded-lg border border-border bg-card p-4 space-y-2">
           <div className="flex items-center justify-between">
             <Gamepad2 className="h-5 w-5 text-muted-foreground" />
@@ -54,26 +51,10 @@ export default async function AdminPage() {
 
         <div className="rounded-lg border border-border bg-card p-4 space-y-2">
           <div className="flex items-center justify-between">
-            <Database className="h-5 w-5 text-muted-foreground" />
-          </div>
-          <div className="text-2xl font-bold">{stats.collections}</div>
-          <div className="text-sm text-muted-foreground">Collections</div>
-        </div>
-
-        <div className="rounded-lg border border-border bg-card p-4 space-y-2">
-          <div className="flex items-center justify-between">
             <ClipboardList className="h-5 w-5 text-muted-foreground" />
           </div>
           <div className="text-2xl font-bold">{stats.requests}</div>
           <div className="text-sm text-muted-foreground">Requests</div>
-        </div>
-
-        <div className="rounded-lg border border-border bg-card p-4 space-y-2">
-          <div className="flex items-center justify-between">
-            <BookOpen className="h-5 w-5 text-muted-foreground" />
-          </div>
-          <div className="text-2xl font-bold">{stats.manuals}</div>
-          <div className="text-sm text-muted-foreground">Manuals</div>
         </div>
 
         <div className="rounded-lg border border-border bg-card p-4 space-y-2">

@@ -142,11 +142,13 @@ async function main() {
   let withLinks = 0;
   let errors = 0;
 
-  for (const game of games) {
+  const CONCURRENCY = 8;
+
+  async function processGame(game: typeof games[0]): Promise<void> {
     const platformSlug = PLATFORM_SLUG_MAP[game.platform];
     if (!platformSlug) {
       processed++;
-      continue;
+      return;
     }
 
     const gameUrl = `${BASE}/${platformSlug}/${game.slug}/`;
@@ -158,12 +160,11 @@ async function main() {
       if (!postId) {
         errors++;
         processed++;
-        continue;
+        return;
       }
 
       const meta = extractMetadata(html);
 
-      // Update game with metadata
       const updateData: any = {};
       if (meta.publisher) updateData.publisher = meta.publisher;
       if (meta.description) updateData.description = meta.description;
@@ -172,13 +173,9 @@ async function main() {
         if (yearMatch) updateData.releaseYear = parseInt(yearMatch[0]);
       }
       if (Object.keys(updateData).length > 0) {
-        await db.game.update({
-          where: { id: game.id },
-          data: updateData,
-        });
+        await db.game.update({ where: { id: game.id }, data: updateData });
       }
 
-      // Get download links
       const links = await getDownloadLinks(postId, gameUrl);
 
       if (links.length > 0) {
@@ -199,14 +196,18 @@ async function main() {
 
       processed++;
       process.stdout.write(`  ${processed}/${games.length} (links: ${withLinks}, errors: ${errors})\r`);
-
-      await new Promise((r) => setTimeout(r, 250));
     } catch (err: any) {
       errors++;
       processed++;
       if (errors < 5) console.error(`\n  Error ${game.slug}: ${err.message}`);
-      await new Promise((r) => setTimeout(r, 1000));
     }
+  }
+
+  // Process in concurrent batches
+  for (let i = 0; i < games.length; i += CONCURRENCY) {
+    const chunk = games.slice(i, i + CONCURRENCY);
+    await Promise.all(chunk.map(processGame));
+    await new Promise((r) => setTimeout(r, 50));
   }
 
   console.log(`\n\n=== RESULTADO ===`);

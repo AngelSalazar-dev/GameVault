@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { Search, Menu, X, Gamepad2, HardDrive, BookOpen, Grid3X3 } from "lucide-react";
+import { Search, Menu, X, Gamepad2, HardDrive, Grid3X3 } from "lucide-react";
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -37,19 +37,6 @@ export default function Header() {
             className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors"
           >
             Platforms
-          </Link>
-          <Link
-            href="/collections"
-            className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors"
-          >
-            Collections
-          </Link>
-          <Link
-            href="/manuals"
-            className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors"
-          >
-            <BookOpen className="h-4 w-4" />
-            Manuals
           </Link>
         </nav>
 
@@ -100,21 +87,6 @@ export default function Header() {
               onClick={() => setMobileMenuOpen(false)}
             >
               Platforms
-            </Link>
-            <Link
-              href="/collections"
-              className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm hover:bg-card transition-colors"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Collections
-            </Link>
-            <Link
-              href="/manuals"
-              className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm hover:bg-card transition-colors"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              <BookOpen className="h-4 w-4" />
-              Manuals
             </Link>
           </nav>
         </div>

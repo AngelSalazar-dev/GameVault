@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Gamepad2, HardDrive, BookOpen, ArrowRight, Download, Star } from "lucide-react";
+import { Gamepad2, HardDrive, ArrowRight, Download, Star } from "lucide-react";
 import { db } from "@/lib/db";
 import { HOME_CATEGORIES } from "@/lib/constants";
 
@@ -117,12 +117,12 @@ export default async function Home() {
           </div>
           <div className="rounded-lg border border-border bg-card p-6 space-y-3">
             <div className="inline-flex rounded-lg bg-accent/10 p-3">
-              <BookOpen className="h-6 w-6 text-accent" />
+              <Download className="h-6 w-6 text-accent" />
             </div>
-            <h2 className="text-lg font-semibold">Manual Project</h2>
+            <h2 className="text-lg font-semibold">Direct Downloads</h2>
             <p className="text-sm text-muted-foreground">
-              Full-color manual scans for thousands of games. Browse or
-              contribute your own.
+              Instant download links with no ads, no surveys, no waiting.
+              Just click and download.
             </p>
           </div>
         </div>

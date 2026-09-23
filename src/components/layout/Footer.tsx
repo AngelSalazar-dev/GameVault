@@ -33,12 +33,6 @@ export default function Footer() {
               >
                 Platforms
               </Link>
-              <Link
-                href="/collections"
-                className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-              >
-                Collections
-              </Link>
             </nav>
           </div>
 
@@ -64,10 +58,10 @@ export default function Footer() {
             <h3 className="text-sm font-semibold">Resources</h3>
             <nav className="flex flex-col gap-2">
               <Link
-                href="/manuals"
+                href="/categories"
                 className="text-sm text-muted-foreground hover:text-foreground transition-colors"
               >
-                Manual Project
+                Categories
               </Link>
             </nav>
           </div>
