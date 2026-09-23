@@ -78,10 +78,13 @@ model TelegramFile {
   gameId      String
   game        Game     @relation(fields: [gameId], references: [id], onDelete: Cascade)
   channel     String
+  channelId   BigInt?
   messageId   Int
   fileName    String
   fileSize    BigInt
   platform    String
+  cachedUrl   String?
+  cachedUntil DateTime?
   createdAt   DateTime @default(now())
 
   @@index([gameId])
