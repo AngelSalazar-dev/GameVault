@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import CoverImage from "@/components/games/CoverImage";
+import { pickRecommendedId, sortLinksWithRecommendedFirst } from "@/lib/links/recommended";
 import type { DownloadLink, Game } from "@prisma/client";
 
 const platformLabels: Record<string, string> = {
@@ -156,37 +157,51 @@ export default async function GamePage({
 
             {game.downloadLinks.length > 0 ? (
               <div className="space-y-2">
-                {game.downloadLinks
-                  .filter((link) => link.isActive)
-                  .map((link) => (
-                    <a
-                      key={link.id}
-                      href={`/download/${link.id}`}
-                      className="flex items-center justify-between rounded-lg border border-border p-3 hover:border-accent hover:bg-accent/5 transition-colors"
-                    >
-                      <div className="flex items-center gap-2">
-                        <ExternalLink className="h-4 w-4" />
-                        <span className="text-sm font-medium">
-                          {link.host || "Download"}
-                        </span>
-                        {(link.host === "hshop" || link.host === "filecrypt") && (
-                          <span className="text-xs text-yellow-500 bg-yellow-500/10 px-1.5 py-0.5 rounded">
-                            captcha
+                {(() => {
+                  const sorted = sortLinksWithRecommendedFirst(game.downloadLinks);
+                  const recommendedId = pickRecommendedId(game.downloadLinks);
+                  return sorted.map((link) => {
+                    const isRecommended = link.id === recommendedId;
+                    return (
+                      <a
+                        key={link.id}
+                        href={`/download/${link.id}`}
+                        className={`flex items-center justify-between rounded-lg border p-3 transition-colors ${
+                          isRecommended
+                            ? "border-accent bg-accent/5 hover:border-accent hover:bg-accent/10"
+                            : "border-border hover:border-accent hover:bg-accent/5"
+                        }`}
+                      >
+                        <div className="flex items-center gap-2">
+                          <ExternalLink className="h-4 w-4" />
+                          <span className="text-sm font-medium">
+                            {link.host || "Download"}
+                          </span>
+                          {isRecommended && (
+                            <span className="text-xs font-semibold text-background bg-accent px-1.5 py-0.5 rounded">
+                              Recomendado
+                            </span>
+                          )}
+                          {(link.host === "hshop" || link.host === "filecrypt") && (
+                            <span className="text-xs text-yellow-500 bg-yellow-500/10 px-1.5 py-0.5 rounded">
+                              captcha
+                            </span>
+                          )}
+                          {link.password && (
+                            <span className="text-xs text-yellow-500 bg-yellow-500/10 px-1.5 py-0.5 rounded">
+                              PW: {link.password}
+                            </span>
+                          )}
+                        </div>
+                        {link.fileSize && (
+                          <span className="text-xs text-muted-foreground">
+                            {link.fileSize}
                           </span>
                         )}
-                        {link.password && (
-                          <span className="text-xs text-yellow-500 bg-yellow-500/10 px-1.5 py-0.5 rounded">
-                            PW: {link.password}
-                          </span>
-                        )}
-                      </div>
-                      {link.fileSize && (
-                        <span className="text-xs text-muted-foreground">
-                          {link.fileSize}
-                        </span>
-                      )}
-                    </a>
-                  ))}
+                      </a>
+                    );
+                  });
+                })()}
               </div>
             ) : (
               <p className="text-sm text-muted-foreground">
