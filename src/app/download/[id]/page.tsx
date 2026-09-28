@@ -1,5 +1,5 @@
 import { db } from "@/lib/db";
-import { Download, ArrowLeft, ExternalLink, ArrowRight } from "lucide-react";
+import { Download, ArrowLeft, ExternalLink, ArrowRight, Copy, AlertCircle } from "lucide-react";
 import Link from "next/link";
 import CoverImage from "@/components/games/CoverImage";
 import PlatformBadge from "@/components/games/PlatformBadge";
@@ -30,6 +30,79 @@ export default async function DownloadPage({ params }: { params: Promise<{ id: s
   }
 
   const host = link.host?.toLowerCase() || "";
+
+  // CDRomance: show copyable URL with authentication notice
+  if (host === "cdromance") {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-[#0a0a0f] px-4">
+        <div className="text-center space-y-6 max-w-2xl mx-auto">
+          {link.game.coverImage && (
+            <img
+              src={link.game.coverImage}
+              alt={link.game.title}
+              className="w-32 h-44 object-cover rounded-lg mx-auto shadow-lg shadow-accent/10"
+            />
+          )}
+          <div className="space-y-2">
+            <h1 className="text-xl font-bold text-white">{link.game.title}</h1>
+            <p className="text-gray-400 text-sm">
+              Descarga disponible en <span className="text-accent font-medium">CDRomance</span>
+              {link.fileSize && <span className="text-gray-500"> &middot; {link.fileSize}</span>}
+            </p>
+          </div>
+
+          <div className="rounded-lg border border-orange-500/30 bg-orange-500/5 p-4 space-y-3">
+            <div className="flex items-center gap-2 text-orange-400">
+              <AlertCircle className="h-5 w-5 flex-shrink-0" />
+              <p className="text-sm text-orange-300">
+                <span className="font-bold">Atención:</span> Los enlaces de CDRomance requieren autenticación manual.
+              </p>
+            </div>
+            <p className="text-sm text-gray-300">
+              Copia la URL y pégala en tu navegador. Es posible que debas iniciar sesión o completar un captcha en CDRomance para acceder a la descarga.
+            </p>
+
+            <div className="rounded-lg border border-gray-700 bg-gray-900/50 p-3">
+              <div className="flex items-center gap-2">
+                <code className="flex-1 text-xs text-gray-300 font-mono break-all bg-gray-800 px-2 py-1 rounded">
+                  {link.url}
+                </code>
+                <button
+                  onClick={() => navigator.clipboard.writeText(link.url)}
+                  className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-gray-700 bg-gray-300 rounded hover:bg-gray-400 transition-colors"
+                  aria-label="Copiar URL"
+                >
+                  <Copy className="h-3.5 w-3.5" />
+                  <span>Copiar</span>
+                </button>
+              </div>
+              <p className="text-xs text-gray-500 mt-2 text-left">
+                Si la descarga no inicia, abre el enlace en una nueva pestaña e inicia sesión en CDRomance si es necesario.
+              </p>
+            </div>
+
+            <a
+              href={link.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 rounded-lg bg-accent/20 border border-accent/30 px-4 py-2 text-sm font-medium text-accent hover:bg-accent/30 hover:border-accent/50 transition-colors"
+            >
+              <ExternalLink className="h-4 w-4" />
+              Abrir en nueva pestaña
+            </a>
+          </div>
+
+          <Link
+            href={`/games/${link.game.slug}`}
+            className="inline-flex items-center gap-2 text-gray-500 hover:text-white text-sm transition-colors"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Volver al juego
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   // hShop: show page URL — user completes Turnstile captcha on hShop
   if (host === "hshop") {
