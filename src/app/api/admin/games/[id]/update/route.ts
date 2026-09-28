@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { isValidPlatform, normalizePlatform } from "@/lib/constants";
 
 export async function PUT(
   request: Request,
@@ -16,11 +17,15 @@ export async function PUT(
     const body = await request.json();
     const { title, platform, genre, description, developer, publisher, releaseYear, fileSize, coverImage, status } = body;
 
+    if (platform && !isValidPlatform(platform)) {
+      return NextResponse.json({ error: "Invalid platform" }, { status: 400 });
+    }
+
     const updated = await db.game.update({
       where: { id },
       data: {
         ...(title && { title }),
-        ...(platform && { platform }),
+        ...(platform && { platform: normalizePlatform(platform) }),
         ...(genre !== undefined && { genre: genre || null }),
         ...(description !== undefined && { description: description || null }),
         ...(developer !== undefined && { developer: developer || null }),

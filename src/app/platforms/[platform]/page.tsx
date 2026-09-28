@@ -1,9 +1,9 @@
-import { notFound } from "next/navigation";
 import { db } from "@/lib/db";
 import GameGrid from "@/components/games/GameGrid";
+import PlatformBadge from "@/components/games/PlatformBadge";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
-import { PLATFORM_LABELS } from "@/lib/constants";
+import { getPlatformLabel } from "@/lib/constants";
 
 export default async function PlatformPage({
   params,
@@ -12,7 +12,18 @@ export default async function PlatformPage({
 }) {
   const { platform } = await params;
 
-  let games: any[] = [];
+type PlatformGame = {
+  id: string;
+  title: string;
+  slug: string;
+  platform: string;
+  coverImage: string | null;
+  rating: unknown;
+  fileSize: string | null;
+  releaseYear: number | null;
+};
+
+  let games: PlatformGame[] = [];
   try {
     games = await db.game.findMany({
       where: {
@@ -46,10 +57,9 @@ export default async function PlatformPage({
           <ArrowLeft className="h-4 w-4" />
           Back to Platforms
         </Link>
-        <div className="text-center py-16">
-          <h1 className="text-3xl font-bold mb-2">
-            {PLATFORM_LABELS[platform] || platform.toUpperCase()}
-          </h1>
+        <div className="text-center py-16 space-y-3">
+          <PlatformBadge platform={platform} variant="md" />
+          <h1 className="text-3xl font-bold">{getPlatformLabel(platform)}</h1>
           <p className="text-muted-foreground">No games found for this platform.</p>
         </div>
       </div>
@@ -67,11 +77,12 @@ export default async function PlatformPage({
       </Link>
 
       <div className="space-y-2">
-        <h1 className="text-3xl font-bold">
-          {PLATFORM_LABELS[platform] || platform.toUpperCase()}
-        </h1>
+        <div className="flex items-center gap-2">
+          <h1 className="text-3xl font-bold">{getPlatformLabel(platform)}</h1>
+          <PlatformBadge platform={platform} variant="md" />
+        </div>
         <p className="text-muted-foreground">
-          {games.length} {games.length === 1 ? "game" : "games"} available
+          {games.length.toLocaleString()} {games.length === 1 ? "game" : "games"} available
         </p>
       </div>
 

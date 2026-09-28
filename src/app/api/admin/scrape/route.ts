@@ -4,6 +4,7 @@ import {
   scrapeSteamRipList,
   scrapeSteamRipDetail,
 } from "@/lib/scraping/steamrip";
+import { normalizePlatform } from "@/lib/constants";
 
 function slugify(text: string): string {
   return text
@@ -108,7 +109,7 @@ export async function POST(request: NextRequest) {
             title: scraped.title,
             slug: scraped.slug,
             description: scraped.description,
-            platform: scraped.platform?.toLowerCase() || "pc",
+            platform: normalizePlatform(scraped.platform) || "pc",
             genre: scraped.genre,
             releaseYear: scraped.year,
             developer: scraped.developer,

@@ -3,36 +3,12 @@
 import { useState } from "react";
 import { Search, X, SlidersHorizontal } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { getPlatformKind, getPlatformLabel } from "@/lib/constants";
 
 interface GameFiltersProps {
   platforms: string[];
   genres: string[];
 }
-
-const platformLabels: Record<string, string> = {
-  pc: "PC",
-  ps1: "PlayStation 1",
-  ps2: "PlayStation 2",
-  ps3: "PlayStation 3",
-  ps4: "PlayStation 4",
-  ps5: "PlayStation 5",
-  n64: "Nintendo 64",
-  gamecube: "GameCube",
-  wii: "Wii",
-  wiiu: "Wii U",
-  switch: "Nintendo Switch",
-  genesis: "Sega Genesis",
-  snes: "Super Nintendo",
-  nes: "Nintendo",
-  gb: "Game Boy",
-  gba: "Game Boy Advance",
-  ds: "Nintendo DS",
-  "3ds": "Nintendo 3DS",
-  xbox: "Xbox",
-  xbox360: "Xbox 360",
-  xboxone: "Xbox One",
-  xboxseries: "Xbox Series",
-};
 
 export default function GameFilters({ platforms, genres }: GameFiltersProps) {
   const router = useRouter();
@@ -99,11 +75,24 @@ export default function GameFilters({ platforms, genres }: GameFiltersProps) {
                 className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:border-accent"
               >
                 <option value="">All Platforms</option>
-                {platforms.map((p) => (
-                  <option key={p} value={p}>
-                    {platformLabels[p] || p.toUpperCase()}
-                  </option>
-                ))}
+                <optgroup label="PC Games">
+                  {platforms
+                    .filter((p) => getPlatformKind(p) === "pc")
+                    .map((p) => (
+                      <option key={p} value={p}>
+                        {getPlatformLabel(p)}
+                      </option>
+                    ))}
+                </optgroup>
+                <optgroup label="ROMs">
+                  {platforms
+                    .filter((p) => getPlatformKind(p) === "rom")
+                    .map((p) => (
+                      <option key={p} value={p}>
+                        {getPlatformLabel(p)}
+                      </option>
+                    ))}
+                </optgroup>
               </select>
             </div>
 
@@ -144,7 +133,7 @@ export default function GameFilters({ platforms, genres }: GameFiltersProps) {
         <div className="flex flex-wrap items-center gap-2">
           {currentPlatform && (
             <span className="inline-flex items-center gap-1 rounded-full border border-accent/30 bg-accent/10 px-3 py-1 text-xs text-accent">
-              {platformLabels[currentPlatform] || currentPlatform.toUpperCase()}
+              {getPlatformLabel(currentPlatform)}
               <button
                 onClick={() => updateParams("platform", "")}
                 aria-label="Remove platform filter"

@@ -19,28 +19,164 @@ export const CATEGORIES = [
 ];
 
 export const PLATFORM_LABELS: Record<string, string> = {
+  "32x": "Sega 32X",
+  "3do": "3DO",
+  "3ds": "Nintendo 3DS",
+  dos: "MS-DOS",
+  dreamcast: "Dreamcast",
+  gamecube: "GameCube",
+  gamegear: "Game Gear",
+  gb: "Game Boy",
+  gba: "Game Boy Advance",
+  gbc: "Game Boy Color",
+  genesis: "Sega Genesis",
+  mastersystem: "Master System",
+  msx: "MSX",
+  n64: "Nintendo 64",
+  nds: "Nintendo DS",
+  nes: "Nintendo",
+  ngcd: "Neo Geo CD",
+  ngp: "Neo Geo Pocket",
   pc: "PC",
+  pcfx: "PC-FX",
   ps1: "PlayStation 1",
   ps2: "PlayStation 2",
   ps3: "PlayStation 3",
   ps4: "PlayStation 4",
   ps5: "PlayStation 5",
-  n64: "Nintendo 64",
-  gamecube: "GameCube",
+  psp: "PlayStation Portable",
+  saturn: "Sega Saturn",
+  segacd: "Sega CD",
+  snes: "Super Nintendo",
+  switch: "Nintendo Switch",
+  tg16: "TurboGrafx-16",
+  tgcd: "TurboGrafx-CD",
+  vita: "PlayStation Vita",
   wii: "Wii",
   wiiu: "Wii U",
-  switch: "Nintendo Switch",
-  genesis: "Sega Genesis",
-  snes: "Super Nintendo",
-  nes: "Nintendo",
-  gb: "Game Boy",
-  gba: "Game Boy Advance",
-  ds: "Nintendo DS",
-  "3ds": "Nintendo 3DS",
+  wonderswan: "WonderSwan",
   xbox: "Xbox",
   xbox360: "Xbox 360",
   xboxone: "Xbox One",
   xboxseries: "Xbox Series",
 };
+
+export const PLATFORM_SHORT: Record<string, string> = {
+  "32x": "32X",
+  "3do": "3DO",
+  "3ds": "3DS",
+  dos: "DOS",
+  dreamcast: "DC",
+  gamecube: "GCN",
+  gamegear: "GG",
+  gb: "GB",
+  gba: "GBA",
+  gbc: "GBC",
+  genesis: "GEN",
+  mastersystem: "SMS",
+  msx: "MSX",
+  n64: "N64",
+  nds: "NDS",
+  nes: "NES",
+  ngcd: "NGCD",
+  ngp: "NGP",
+  pc: "PC",
+  pcfx: "PCFX",
+  ps1: "PS1",
+  ps2: "PS2",
+  ps3: "PS3",
+  ps4: "PS4",
+  ps5: "PS5",
+  psp: "PSP",
+  saturn: "SAT",
+  segacd: "SEGACD",
+  snes: "SNES",
+  switch: "SWITCH",
+  tg16: "TG16",
+  tgcd: "TGCD",
+  vita: "VITA",
+  wii: "WII",
+  wiiu: "WIIU",
+  wonderswan: "WS",
+  xbox: "XBOX",
+  xbox360: "X360",
+  xboxone: "XONE",
+  xboxseries: "XSER",
+};
+
+export const PC_PLATFORMS = new Set(["pc", "dos", "pcfx"]);
+
+export type PlatformKind = "pc" | "rom";
+
+// The DB uses `nds`; the UI used to use `ds`, which left 1.765 games
+// unreachable. `nds` is the only canonical value.
+export const PLATFORM_ALIASES: Record<string, string> = {
+  ds: "nds",
+  nintendods: "nds",
+  windows: "pc",
+  win: "pc",
+};
+
+export function normalizePlatform(raw: string | null | undefined): string {
+  if (!raw) return "";
+  const key = raw.toLowerCase().trim();
+  return PLATFORM_ALIASES[key] ?? key;
+}
+
+export function isValidPlatform(raw: string | null | undefined): boolean {
+  const value = normalizePlatform(raw);
+  return Object.prototype.hasOwnProperty.call(PLATFORM_LABELS, value);
+}
+
+export function getPlatformKind(platform: string): PlatformKind {
+  return PC_PLATFORMS.has(normalizePlatform(platform)) ? "pc" : "rom";
+}
+
+export function getPlatformLabel(platform: string): string {
+  const value = normalizePlatform(platform);
+  return PLATFORM_LABELS[value] || value.toUpperCase();
+}
+
+export function getPlatformShort(platform: string): string {
+  const value = normalizePlatform(platform);
+  return PLATFORM_SHORT[value] || value.toUpperCase();
+}
+
+export const HOME_PLATFORM = "pc";
+
+export const HOME_PLATFORM_CHIPS: { slug: string; label: string }[] = [
+  { slug: "pc", label: "PC" },
+  { slug: "dos", label: "DOS" },
+  { slug: "pcfx", label: "PC-FX" },
+  { slug: "ps1", label: "PS1" },
+  { slug: "ps2", label: "PS2" },
+  { slug: "psp", label: "PSP" },
+  { slug: "n64", label: "N64" },
+  { slug: "gamecube", label: "GameCube" },
+  { slug: "wii", label: "Wii" },
+  { slug: "switch", label: "Switch" },
+  { slug: "genesis", label: "Genesis" },
+  { slug: "snes", label: "SNES" },
+  { slug: "nes", label: "NES" },
+  { slug: "gb", label: "GB" },
+  { slug: "gbc", label: "GBC" },
+  { slug: "gba", label: "GBA" },
+  { slug: "nds", label: "DS" },
+  { slug: "3ds", label: "3DS" },
+  { slug: "saturn", label: "Saturn" },
+  { slug: "dreamcast", label: "Dreamcast" },
+  { slug: "segacd", label: "Sega CD" },
+  { slug: "gamegear", label: "Game Gear" },
+  { slug: "mastersystem", label: "Master System" },
+  { slug: "32x", label: "32X" },
+  { slug: "vita", label: "Vita" },
+  { slug: "msx", label: "MSX" },
+  { slug: "wonderswan", label: "WonderSwan" },
+  { slug: "tg16", label: "TG16" },
+  { slug: "tgcd", label: "TGCD" },
+  { slug: "ngp", label: "NGP" },
+  { slug: "ngcd", label: "Neo Geo CD" },
+  { slug: "3do", label: "3DO" },
+];
 
 export const HOME_CATEGORIES = CATEGORIES.slice(0, 12);

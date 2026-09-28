@@ -34,7 +34,7 @@ async function main() {
         title: game.title.replace(/\s*Free Download.*$/i, "").trim(),
         slug,
         description: `${game.title.replace(/\s*Free Download.*$/i, "").trim()} - Pre-installed PC game from SteamRip.`,
-        platform: "PC",
+        platform: "pc",
         genre: normalizeGenre(game.categories?.[0]),
         releaseYear: game.year || null,
         coverImage: game.coverImage || null,

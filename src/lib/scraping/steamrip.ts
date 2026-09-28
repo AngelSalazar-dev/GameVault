@@ -1,5 +1,6 @@
 import axios from "axios";
 import * as cheerio from "cheerio";
+import { normalizePlatform } from "@/lib/constants";
 
 const BASE_URL = "https://steamrip.com";
 const USER_AGENT =
@@ -237,7 +238,7 @@ export async function scrapeSteamRipDetail(
       publisher: gameInfo["publisher"],
       description: descriptionParts.join("\n\n"),
       version: gameInfo["version"],
-      platform: gameInfo["platform"] || "PC",
+      platform: normalizePlatform(gameInfo["platform"]) || "pc",
       systemRequirements,
       downloadLinks,
     };

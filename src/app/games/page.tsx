@@ -102,7 +102,7 @@ async function getGames(searchParams: {
 
 async function getFilters() {
   try {
-    const platforms = await db.game.findMany({
+    const platformsRaw = await db.game.findMany({
       where: { status: "active" },
       select: { platform: true },
       distinct: ["platform"],
@@ -116,8 +116,21 @@ async function getFilters() {
       orderBy: { genre: "asc" },
     });
 
+    // Scrapers write "PC" while the seed writes "pc". The DB collation is
+    // case-insensitive so queries match both, but Prisma's distinct dedupes
+    // in JS and would surface the same platform twice.
+    const seen = new Set<string>();
+    const platforms: string[] = [];
+    for (const p of platformsRaw) {
+      const value = p.platform?.toLowerCase();
+      if (value && !seen.has(value)) {
+        seen.add(value);
+        platforms.push(value);
+      }
+    }
+
     return {
-      platforms: platforms.map((p) => p.platform).filter(Boolean) as string[],
+      platforms,
       genres: genres.map((g) => g.genre).filter(Boolean) as string[],
     };
   } catch (error) {

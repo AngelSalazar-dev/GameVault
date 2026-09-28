@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { Star, Download } from "lucide-react";
 import CoverImage from "./CoverImage";
+import PlatformBadge from "./PlatformBadge";
 
 interface GameCardProps {
   id: string;
@@ -14,31 +15,6 @@ interface GameCardProps {
   fileSize?: string;
   releaseYear?: number;
 }
-
-const platformColors: Record<string, string> = {
-  pc: "bg-blue-500/20 text-blue-400",
-  ps1: "bg-gray-500/20 text-gray-400",
-  ps2: "bg-gray-500/20 text-gray-400",
-  ps3: "bg-blue-500/20 text-blue-400",
-  ps4: "bg-blue-600/20 text-blue-500",
-  ps5: "bg-blue-700/20 text-blue-600",
-  n64: "bg-red-500/20 text-red-400",
-  gamecube: "bg-purple-500/20 text-purple-400",
-  wii: "bg-blue-400/20 text-blue-300",
-  wiiu: "bg-blue-400/20 text-blue-300",
-  switch: "bg-red-600/20 text-red-500",
-  genesis: "bg-blue-800/20 text-blue-700",
-  snes: "bg-purple-600/20 text-purple-500",
-  nes: "bg-red-600/20 text-red-500",
-  gb: "bg-green-500/20 text-green-400",
-  gba: "bg-purple-500/20 text-purple-400",
-  ds: "bg-gray-500/20 text-gray-400",
-  "3ds": "bg-red-500/20 text-red-400",
-  xbox: "bg-green-600/20 text-green-500",
-  xbox360: "bg-green-500/20 text-green-400",
-  xboxone: "bg-green-600/20 text-green-500",
-  xboxseries: "bg-green-700/20 text-green-600",
-};
 
 export default function GameCard({
   title,
@@ -60,11 +36,7 @@ export default function GameCard({
             iconClassName="h-12 w-12"
           />
           <div className="absolute top-2 right-2">
-            <span
-              className={`inline-flex items-center rounded px-1.5 py-0.5 text-xs font-medium ${platformColors[platform] || "bg-gray-500/20 text-gray-400"}`}
-            >
-              {platform.toUpperCase()}
-            </span>
+            <PlatformBadge platform={platform} />
           </div>
         </div>
         <div className="p-3 space-y-2">

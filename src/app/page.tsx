@@ -1,26 +1,34 @@
 import Link from "next/link";
-import { Gamepad2, HardDrive, ArrowRight, Download } from "lucide-react";
+import { Gamepad2, HardDrive, ArrowRight, Download, Sparkles } from "lucide-react";
 import { db } from "@/lib/db";
-import { HOME_CATEGORIES } from "@/lib/constants";
+import {
+  HOME_CATEGORIES,
+  HOME_PLATFORM,
+  HOME_PLATFORM_CHIPS,
+  getPlatformKind,
+} from "@/lib/constants";
 import CoverImage from "@/components/games/CoverImage";
+import PlatformBadge from "@/components/games/PlatformBadge";
+
+const gameSelect = {
+  id: true,
+  title: true,
+  slug: true,
+  platform: true,
+  coverImage: true,
+  fileSize: true,
+  releaseYear: true,
+  genre: true,
+} as const;
 
 async function getRecentGames() {
   try {
-    const games = await db.game.findMany({
-      where: { status: "active", coverImage: { not: null } },
+    return await db.game.findMany({
+      where: { status: "active", platform: HOME_PLATFORM, coverImage: { not: null } },
       orderBy: { createdAt: "desc" },
       take: 12,
-      select: {
-        id: true,
-        title: true,
-        slug: true,
-        coverImage: true,
-        fileSize: true,
-        releaseYear: true,
-        genre: true,
-      },
+      select: gameSelect,
     });
-    return games;
   } catch {
     return [];
   }
@@ -28,7 +36,7 @@ async function getRecentGames() {
 
 async function getGameCount() {
   try {
-    return await db.game.count({ where: { status: "active" } });
+    return await db.game.count({ where: { status: "active", platform: HOME_PLATFORM } });
   } catch {
     return 0;
   }
@@ -36,29 +44,36 @@ async function getGameCount() {
 
 async function getCategoryGames(genre: string) {
   try {
-    const games = await db.game.findMany({
-      where: { status: "active", genre, coverImage: { not: null } },
+    return await db.game.findMany({
+      where: {
+        status: "active",
+        platform: HOME_PLATFORM,
+        genre,
+        coverImage: { not: null },
+      },
       orderBy: { createdAt: "desc" },
       take: 6,
-      select: {
-        id: true,
-        title: true,
-        slug: true,
-        coverImage: true,
-        fileSize: true,
-      },
+      select: gameSelect,
     });
-    return games;
   } catch {
     return [];
   }
 }
 
 export default async function Home() {
-  const [recentGames, totalGames] = await Promise.all([
+  const [recentGames, totalGames, categoryRows] = await Promise.all([
     getRecentGames(),
     getGameCount(),
+    Promise.all(
+      HOME_CATEGORIES.slice(0, 4).map(async (cat) => ({
+        category: cat,
+        games: await getCategoryGames(cat.slug),
+      }))
+    ),
   ]);
+
+  const genreHref = (slug: string) =>
+    `/games?genre=${slug}&platform=${HOME_PLATFORM}`;
 
   return (
     <div className="space-y-12 py-6">
@@ -66,29 +81,29 @@ export default async function Home() {
       <section className="mx-auto max-w-7xl px-4 text-center space-y-6">
         <div className="inline-flex items-center gap-2 rounded-full border border-accent/30 bg-accent/10 px-4 py-1.5 text-sm text-accent">
           <Gamepad2 className="h-4 w-4" />
-          {totalGames > 0 ? `${totalGames.toLocaleString()}+ Free Games` : "Free Games Library"}
+          {totalGames > 0 ? `${totalGames.toLocaleString()}+ Free PC Games` : "Free PC Games Library"}
         </div>
         <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight">
           Welcome to{" "}
           <span className="text-accent">GameVault</span>
         </h1>
         <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
-          Your ultimate vault for free PC games and classic console ROMs.
-          Browse, download, and preserve gaming history.
+          Thousands of free PC games, pre-installed and ready to play.
+          Download, extract, run. No installers, no waiting.
         </p>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
           <Link
-            href="/games"
+            href={`/games?platform=${HOME_PLATFORM}`}
             className="inline-flex items-center gap-2 rounded-lg bg-accent px-6 py-3 text-sm font-semibold text-background hover:bg-accent-hover transition-colors"
           >
-            Browse All Games
+            Browse PC Games
             <ArrowRight className="h-4 w-4" />
           </Link>
           <Link
             href="/platforms"
             className="inline-flex items-center gap-2 rounded-lg border border-border px-6 py-3 text-sm font-semibold hover:bg-card transition-colors"
           >
-            View Platforms
+            Console ROMs
           </Link>
         </div>
       </section>
@@ -100,20 +115,20 @@ export default async function Home() {
             <div className="inline-flex rounded-lg bg-accent/10 p-3">
               <HardDrive className="h-6 w-6 text-accent" />
             </div>
-            <h2 className="text-lg font-semibold">PC Games</h2>
+            <h2 className="text-lg font-semibold">Pre-installed PC Games</h2>
             <p className="text-sm text-muted-foreground">
-              Pre-installed PC games ready to play. No installation needed,
-              just download and run.
+              Every game is already set up and ready to run. No installation
+              needed, just download and play.
             </p>
           </div>
           <div className="rounded-lg border border-border bg-card p-6 space-y-3">
             <div className="inline-flex rounded-lg bg-accent/10 p-3">
-              <Gamepad2 className="h-6 w-6 text-accent" />
+              <Sparkles className="h-6 w-6 text-accent" />
             </div>
-            <h2 className="text-lg font-semibold">Console ROMs</h2>
+            <h2 className="text-lg font-semibold">Curated by Genre</h2>
             <p className="text-sm text-muted-foreground">
-              Classic games from 34+ consoles. NES, SNES, PlayStation,
-              Nintendo 64, and more.
+              Action, RPG, strategy, indie and more. Browse the PC library
+              organized by genre and year.
             </p>
           </div>
           <div className="rounded-lg border border-border bg-card p-6 space-y-3">
@@ -133,9 +148,9 @@ export default async function Home() {
       {recentGames.length > 0 && (
         <section className="mx-auto max-w-7xl px-4 space-y-6">
           <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-bold">Recent Games</h2>
+            <h2 className="text-2xl font-bold">Latest PC Games</h2>
             <Link
-              href="/games"
+              href={`/games?platform=${HOME_PLATFORM}`}
               className="text-sm text-accent hover:underline flex items-center gap-1"
             >
               View all <ArrowRight className="h-4 w-4" />
@@ -156,6 +171,9 @@ export default async function Home() {
                       className="h-full w-full object-cover transition-transform group-hover:scale-105"
                       iconClassName="h-8 w-8"
                     />
+                    <div className="absolute top-2 right-2">
+                      <PlatformBadge platform={game.platform} />
+                    </div>
                   </div>
                   <div className="p-2 space-y-1">
                     <h3 className="font-medium text-xs line-clamp-2 group-hover:text-accent transition-colors">
@@ -181,19 +199,19 @@ export default async function Home() {
       {/* Categories */}
       <section className="mx-auto max-w-7xl px-4 space-y-6">
         <div className="flex items-center justify-between">
-          <h2 className="text-2xl font-bold">Browse by Category</h2>
+          <h2 className="text-2xl font-bold">Browse PC by Category</h2>
           <Link
-            href="/categories"
+            href={`/games?platform=${HOME_PLATFORM}`}
             className="text-sm text-accent hover:underline flex items-center gap-1"
           >
-            All categories <ArrowRight className="h-4 w-4" />
+            All PC games <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
           {HOME_CATEGORIES.map((cat) => (
             <Link
               key={cat.slug}
-              href={`/games?genre=${cat.slug}`}
+              href={genreHref(cat.slug)}
               className="flex items-center gap-3 rounded-lg border border-border bg-card p-4 hover:border-accent hover:bg-accent/5 transition-all"
             >
               <span className="text-2xl">{cat.icon}</span>
@@ -204,17 +222,16 @@ export default async function Home() {
       </section>
 
       {/* Category Previews */}
-      {HOME_CATEGORIES.slice(0, 4).map(async (cat) => {
-        const games = await getCategoryGames(cat.slug);
+      {categoryRows.map(({ category, games }) => {
         if (games.length === 0) return null;
         return (
-          <section key={cat.slug} className="mx-auto max-w-7xl px-4 space-y-4">
+          <section key={category.slug} className="mx-auto max-w-7xl px-4 space-y-4">
             <div className="flex items-center justify-between">
               <h3 className="text-xl font-bold flex items-center gap-2">
-                <span>{cat.icon}</span> {cat.name}
+                <span>{category.icon}</span> {category.name}
               </h3>
               <Link
-                href={`/games?genre=${cat.slug}`}
+                href={genreHref(category.slug)}
                 className="text-sm text-accent hover:underline flex items-center gap-1"
               >
                 More <ArrowRight className="h-4 w-4" />
@@ -227,14 +244,17 @@ export default async function Home() {
                   href={`/games/${game.slug}`}
                   className="group"
                 >
-                  <div className="relative overflow-hidden rounded-lg border border-border bg-card transition-all hover:border-accent">
-                    <div className="aspect-[3/4] overflow-hidden bg-muted">
+                  <div className="relative overflow-hidden rounded-lg border border-border bg-card transition-all group-hover:border-accent">
+                    <div className="aspect-[3/4] relative overflow-hidden bg-muted">
                       <CoverImage
                         src={game.coverImage}
                         alt={game.title}
                         className="h-full w-full object-cover transition-transform group-hover:scale-105"
                         iconClassName="h-6 w-6"
                       />
+                      <div className="absolute top-1.5 right-1.5">
+                        <PlatformBadge platform={game.platform} />
+                      </div>
                     </div>
                     <div className="p-2">
                       <h4 className="text-xs font-medium line-clamp-2 group-hover:text-accent">
@@ -249,17 +269,26 @@ export default async function Home() {
         );
       })}
 
-      {/* Platforms */}
+      {/* Supported Platforms */}
       <section className="mx-auto max-w-7xl px-4 space-y-6">
-        <h2 className="text-2xl font-bold">Supported Platforms</h2>
-        <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-3">
-          {["PC", "PS1", "PS2", "PS3", "PS4", "PS5", "N64", "GameCube", "Wii", "Switch", "Genesis", "SNES", "NES", "GB", "GBA", "DS", "3DS", "Xbox", "Xbox 360", "Xbox One"].map((platform) => (
+        <div className="space-y-1">
+          <h2 className="text-2xl font-bold">Supported Platforms</h2>
+          <p className="text-sm text-muted-foreground">
+            PC platforms in green. The rest are console ROMs.
+          </p>
+        </div>
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
+          {HOME_PLATFORM_CHIPS.map((chip) => (
             <Link
-              key={platform}
-              href={`/platforms/${platform.toLowerCase().replace(/\s+/g, "")}`}
-              className="rounded-lg border border-border bg-card p-3 text-center text-sm font-medium hover:border-accent hover:text-accent transition-colors"
+              key={chip.slug}
+              href={`/platforms/${chip.slug}`}
+              className={
+                getPlatformKind(chip.slug) === "pc"
+                  ? "rounded-lg border border-accent/40 bg-accent/10 p-3 text-center text-sm font-semibold text-accent hover:bg-accent/20 transition-colors"
+                  : "rounded-lg border border-border bg-card p-3 text-center text-sm font-medium hover:border-accent hover:text-accent transition-colors"
+              }
             >
-              {platform}
+              {chip.label}
             </Link>
           ))}
         </div>

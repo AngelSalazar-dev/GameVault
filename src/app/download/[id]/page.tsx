@@ -2,6 +2,7 @@ import { db } from "@/lib/db";
 import { Download, ArrowLeft, ExternalLink, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import CoverImage from "@/components/games/CoverImage";
+import PlatformBadge from "@/components/games/PlatformBadge";
 
 export const dynamic = "force-dynamic";
 
@@ -10,7 +11,7 @@ export default async function DownloadPage({ params }: { params: Promise<{ id: s
 
   const link = await db.downloadLink.findUnique({
     where: { id },
-    include: { game: { select: { title: true, slug: true, coverImage: true } } },
+    include: { game: { select: { title: true, slug: true, coverImage: true, platform: true } } },
   });
 
   if (!link || !link.isActive) {
@@ -43,6 +44,9 @@ export default async function DownloadPage({ params }: { params: Promise<{ id: s
           />
           <div className="space-y-2">
             <h1 className="text-xl font-bold text-white">{link.game.title}</h1>
+            <div className="flex justify-center">
+              <PlatformBadge platform={link.game.platform} />
+            </div>
             <p className="text-gray-400 text-sm">
               Descarga disponible en <span className="text-accent font-medium">hShop</span>
               {link.fileSize && <span className="text-gray-500"> &middot; {link.fileSize}</span>}
@@ -89,6 +93,9 @@ export default async function DownloadPage({ params }: { params: Promise<{ id: s
           />
           <div className="space-y-2">
             <h1 className="text-xl font-bold text-white">{link.game.title}</h1>
+            <div className="flex justify-center">
+              <PlatformBadge platform={link.game.platform} />
+            </div>
             <p className="text-gray-400 text-sm">
               Descarga disponible en <span className="text-accent font-medium">filecrypt.cc</span>
               {link.fileSize && <span className="text-gray-500"> &middot; {link.fileSize}</span>}
@@ -148,6 +155,9 @@ export default async function DownloadPage({ params }: { params: Promise<{ id: s
           />
           <div className="space-y-2">
             <h1 className="text-xl font-bold text-white">{link.game.title}</h1>
+            <div className="flex justify-center">
+              <PlatformBadge platform={link.game.platform} />
+            </div>
             <p className="text-gray-400 text-sm">
               Descarga disponible en <span className="text-accent font-medium">{link.host}</span>
               {link.fileSize && <span className="text-gray-500"> &middot; {link.fileSize}</span>}
@@ -202,6 +212,9 @@ export default async function DownloadPage({ params }: { params: Promise<{ id: s
           />
           <div className="space-y-2">
             <h1 className="text-xl font-bold text-white">{link.game.title}</h1>
+            <div className="flex justify-center">
+              <PlatformBadge platform={link.game.platform} />
+            </div>
             <p className="text-gray-400 text-sm">
               Descargando desde <span className="text-accent font-medium">{link.host || "servidor"}</span>
               {link.fileSize && <span className="text-gray-500"> &middot; {link.fileSize}</span>}

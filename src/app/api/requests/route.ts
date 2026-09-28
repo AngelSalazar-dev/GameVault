@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { PLATFORM_LABELS } from "@/lib/constants";
+import { isValidPlatform, normalizePlatform } from "@/lib/constants";
 import { checkRateLimit, getClientIp, isSuspiciousUserAgent } from "@/lib/security";
 
 function stripHtml(value: string): string {
@@ -65,7 +65,7 @@ export async function POST(request: Request) {
     }
 
     const title = typeof raw.title === "string" ? stripHtml(raw.title) : "";
-    const platform = typeof raw.platform === "string" ? raw.platform.trim() : "";
+    const platform = normalizePlatform(typeof raw.platform === "string" ? raw.platform : "");
     const description = typeof raw.description === "string" ? stripHtml(raw.description).slice(0, 2000) : "";
     const authorName = typeof raw.authorName === "string" ? stripHtml(raw.authorName).slice(0, 60) : "";
 
@@ -73,7 +73,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Title must be between 3 and 120 characters" }, { status: 400 });
     }
 
-    if (!platform || !(platform in PLATFORM_LABELS)) {
+    if (!isValidPlatform(platform)) {
       return NextResponse.json({ error: "Invalid platform" }, { status: 400 });
     }
 

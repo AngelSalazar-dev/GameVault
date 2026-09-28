@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { isValidPlatform, normalizePlatform } from "@/lib/constants";
 
 function slugify(text: string): string {
   return text
@@ -20,6 +21,11 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Title and platform are required" }, { status: 400 });
     }
 
+    const normalizedPlatform = normalizePlatform(platform);
+    if (!isValidPlatform(normalizedPlatform)) {
+      return NextResponse.json({ error: "Invalid platform" }, { status: 400 });
+    }
+
     let slug = slugify(title);
     const existing = await db.game.findUnique({ where: { slug } });
     if (existing) {
@@ -30,7 +36,7 @@ export async function POST(request: Request) {
       data: {
         title,
         slug,
-        platform,
+        platform: normalizedPlatform,
         genre: genre || null,
         description: description || null,
         developer: developer || null,
