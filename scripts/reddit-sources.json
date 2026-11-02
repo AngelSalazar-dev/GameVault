@@ -1,0 +1,54 @@
+{
+  "_notas": [
+    "Sitios extraidos de https://www.reddit.com/r/Piracy/wiki/megathread/games/",
+    "El megathread NO tiene links por juego: es un directorio curado de sitios.",
+    "Todos los de esta lista respondieron HTTP 200 el 2026-10-02 (ver scripts/probe-sources.ts).",
+    "Se descartan los abandonware por decision propia, y los 4 que ya no existen.",
+    "El megathread esta desactualizado: fitgirl-repacks.site y elamigos.site dan error de DNS."
+  ],
+  "descartados": [
+    { "nombre": "FitGirl Repacks", "url": "https://fitgirl-repacks.site/", "motivo": "DNS ENOTFOUND" },
+    { "nombre": "ElAmigos", "url": "https://elamigos.site/", "motivo": "DNS ENOTFOUND" },
+    { "nombre": "scene.cat", "url": "https://scene.cat/", "motivo": "502 Bad Gateway" },
+    { "nombre": "CollectionChamber", "url": "https://collectionchamber.blogspot.com/", "motivo": "503 Service Unavailable" },
+    { "nombre": "abandonware (7 sitios)", "motivo": "descartado por decision propia" }
+  ],
+  "sitios": [
+    { "key": "gamdie", "nombre": "Gamdie", "url": "https://gamdie.com/", "tipo": "direct", "acceso": "http", "estado": "listo", "notas": "CORRIDA COMPLETA. 46 juegos, 92 links (2.0 por juego): gofile + bzzhr. El sitio no pagina. Patron de referencia: scripts/scrape-gamedie.ts" },
+    { "key": "gamepcfull", "nombre": "GamePCFull", "url": "https://gamepcfull.com/", "tipo": "direct", "acceso": "http", "estado": "listo", "notas": "PRUEBA 50/5017. 9.32 links por juego (filecrypt 70%, 1fichier, gofile, pixeldrain, mega, terabox). Descubrimiento via sitemap (6 archivos, 5017 urls) en vez de las 279 paginas. scripts/scrape-gamepcfull.ts" },
+
+    { "key": "steamgg", "nombre": "SteamGG", "url": "https://steamgg.net/", "tipo": "direct", "acceso": "http", "estado": "pendiente", "notas": "verificado: akirabox + pixeldrain + vikingfile" },
+    { "key": "gamespack", "nombre": "GAMESPACK", "url": "https://gamespack.net/", "tipo": "direct", "acceso": "http", "estado": "pendiente" },
+    { "key": "gamezdl", "nombre": "gamezdl", "url": "https://gamezdl.cc/", "tipo": "direct", "acceso": "http", "estado": "pendiente" },
+    { "key": "reloadedsteam", "nombre": "Reloaded Steam", "url": "https://reloadedsteam.com/", "tipo": "direct", "acceso": "http", "estado": "pendiente" },
+    { "key": "gload", "nombre": "GLOAD", "url": "https://gload.to/", "tipo": "direct", "acceso": "http", "estado": "pendiente" },
+    { "key": "installgames", "nombre": "InstallGames", "url": "https://installgames.net/", "tipo": "direct", "acceso": "http", "estado": "pendiente" },
+    { "key": "astralgames", "nombre": "AstralGames", "url": "https://astralgames.net/", "tipo": "direct", "acceso": "http", "estado": "pendiente" },
+    { "key": "thedarkgames", "nombre": "The Dark Games", "url": "https://the-dark-games.com/", "tipo": "direct", "acceso": "http", "estado": "pendiente" },
+    { "key": "erai", "nombre": "Erai-raws", "url": "https://www.erai-raws.info/", "tipo": "direct", "acceso": "http", "estado": "pendiente" },
+    { "key": "steemora", "nombre": "SteamOra", "url": "https://steamora.net/", "tipo": "direct", "acceso": "http", "estado": "pendiente" },
+    { "key": "zeigames", "nombre": "Zei Games", "url": "https://zeigames.com/", "tipo": "direct", "acceso": "http", "estado": "pendiente" },
+    { "key": "crackedgames", "nombre": "Cracked-Games", "url": "https://cracked-games.org/", "tipo": "direct", "acceso": "http", "estado": "pendiente" },
+    { "key": "stevvgame", "nombre": "Stevv Game", "url": "https://www.stevvgame.com/", "tipo": "direct", "acceso": "http", "estado": "pendiente" },
+    { "key": "gamebounty", "nombre": "Game Bounty", "url": "https://gamebounty.world/", "tipo": "direct", "acceso": "http", "estado": "pendiente" },
+    { "key": "elenemigos", "nombre": "ElEnemigos", "url": "https://elenemigos.com/", "tipo": "direct", "acceso": "http", "estado": "pendiente", "notas": "en espanol" },
+    { "key": "potiongang", "nombre": "PotionGang", "url": "https://www.potiongang.fr/", "tipo": "direct", "acceso": "http", "estado": "pendiente", "notas": "en frances" },
+    { "key": "triahgames", "nombre": "Triah Games", "url": "https://triahgames.com/", "tipo": "direct", "acceso": "http", "estado": "pendiente", "notas": "en indonesio" },
+    { "key": "repacklab", "nombre": "Repacklab", "url": "https://repacklab.com/", "tipo": "repack", "acceso": "http", "estado": "pendiente", "notas": "NSFW" },
+    { "key": "m4ckd0ge", "nombre": "M4CKD0GE Repacks", "url": "https://m4ckd0ge-repacks.site/", "tipo": "repack", "acceso": "http", "estado": "pendiente" },
+    { "key": "spinneret", "nombre": "Spinneret Repacks", "url": "https://spinneretrepacks.qzz.io/", "tipo": "repack", "acceso": "http", "estado": "pendiente" },
+
+    { "key": "torrentgames", "nombre": "Torrent Games", "url": "https://torrent-games.games/", "tipo": "torrent", "acceso": "http", "estado": "pendiente", "notas": "en ruso" },
+    { "key": "appnetica", "nombre": "Appnetica", "url": "https://appnetica.com/", "tipo": "torrent", "acceso": "http", "estado": "pendiente", "notas": "en ruso" },
+    { "key": "byxatab", "nombre": "ByXatab", "url": "https://byxatab.com/", "tipo": "torrent", "acceso": "http", "estado": "pendiente", "notas": "en ruso" },
+    { "key": "eltorr", "nombre": "ElTorr", "url": "https://eltorr.com/", "tipo": "torrent", "acceso": "http", "estado": "pendiente", "notas": "en ruso" },
+    { "key": "tapochek", "nombre": "Tapochek", "url": "https://tapochek.net/", "tipo": "torrent", "acceso": "http", "estado": "pendiente", "notas": "en ruso, requiere registro" },
+    { "key": "freegogpcgames", "nombre": "Free GOG PC Games", "url": "https://freegogpcgames.com/", "tipo": "direct", "acceso": "http", "estado": "pendiente" },
+    { "key": "gogrev", "nombre": "GOG Revived", "url": "https://gog-rev.com/", "tipo": "direct", "acceso": "http", "estado": "pendiente" },
+    { "key": "onlinefix", "nombre": "Online-Fix", "url": "https://online-fix.me/", "tipo": "direct", "acceso": "http", "estado": "pendiente", "notas": "en ruso" },
+
+    { "key": "ankergames", "nombre": "AnkerGames", "url": "https://ankergames.to/", "tipo": "direct", "acceso": "puppeteer", "estado": "pendiente", "notas": "Cloudflare: 403 a axios" },
+    { "key": "dodi", "nombre": "DODI Repacks", "url": "https://1337x.to/user/DODI/", "tipo": "torrent", "acceso": "puppeteer", "estado": "pendiente", "notas": "Cloudflare: 403 a axios" },
+    { "key": "kaoskrew", "nombre": "KaOsKrew", "url": "https://kaoskrew.org/", "tipo": "torrent", "acceso": "puppeteer", "estado": "pendiente", "notas": "Cloudflare: 403 a axios" }
+  ]
+}

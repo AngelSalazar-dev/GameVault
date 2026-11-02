@@ -65,10 +65,44 @@ export default function Footer() {
               </Link>
             </nav>
           </div>
+        <div className="space-y-3">
+            <h3 className="text-sm font-semibold">Legal</h3>
+            <nav className="flex flex-col gap-2">
+              <Link
+                href="/privacidad"
+                className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+              >
+                Privacy Policy
+              </Link>
+              <Link
+                href="/terminos"
+                className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+              >
+                Terms &amp; Conditions
+              </Link>
+            </nav>
+          </div>
         </div>
 
-        <div className="mt-8 border-t border-border pt-6 text-center text-sm text-muted-foreground">
-          <p>GameVault - Preserving gaming history since 2026</p>
+        <div className="mt-8 space-y-4 border-t border-border pt-6">
+          <p className="text-xs leading-relaxed text-muted-foreground">
+            <strong className="text-foreground">Disclaimer:</strong> GameVault is a public
+            index of game titles and links to third-party download sources. We do not host
+            or distribute any game files. Many titles remain under copyright; listing a
+            link is not a claim of ownership. Use the site responsibly and in accordance
+            with the laws of your country. See our{" "}
+            <Link href="/terminos" className="underline underline-offset-4 hover:text-foreground">
+              Terms &amp; Conditions
+            </Link>{" "}
+            and{" "}
+            <Link href="/privacidad" className="underline underline-offset-4 hover:text-foreground">
+              Privacy Policy
+            </Link>
+            .
+          </p>
+          <p className="text-center text-sm text-muted-foreground">
+            GameVault - Preserving gaming history since 2026
+          </p>
         </div>
       </div>
     </footer>

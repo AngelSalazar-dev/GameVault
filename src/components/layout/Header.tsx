@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { Search, Menu, X, Gamepad2, HardDrive, Grid3X3, Home, MessageSquare } from "lucide-react";
+import { Search, Menu, X, Gamepad2, HardDrive, Grid3X3, Home, MessageSquare, Monitor } from "lucide-react";
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -40,7 +40,7 @@ export default function Header() {
             Categories
           </Link>
           <Link
-            href="/platforms"
+            href="/ports"\r\n              onClick={() => setMobileMenuOpen(false)}\r\n            >\r\n              <Monitor className="h-4 w-4" />\r\n              Ports\r\n            </Link>\r\n            <Link\r\n              href="/platforms"
             className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors"
           >
             Platforms
@@ -104,7 +104,7 @@ export default function Header() {
               Categories
             </Link>
             <Link
-              href="/platforms"
+              href="/ports"\r\n              onClick={() => setMobileMenuOpen(false)}\r\n            >\r\n              <Monitor className="h-4 w-4" />\r\n              Ports\r\n            </Link>\r\n            <Link\r\n              href="/platforms"
               className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm hover:bg-card transition-colors"
               onClick={() => setMobileMenuOpen(false)}
             >
@@ -124,3 +124,6 @@ export default function Header() {
     </header>
   );
 }
+
+
+
