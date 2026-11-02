@@ -40,7 +40,14 @@ export default function Header() {
             Categories
           </Link>
           <Link
-            href="/ports"\r\n              onClick={() => setMobileMenuOpen(false)}\r\n            >\r\n              <Monitor className="h-4 w-4" />\r\n              Ports\r\n            </Link>\r\n            <Link\r\n              href="/platforms"
+            href="/ports"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              <Monitor className="h-4 w-4" />
+              Ports
+            </Link>
+            <Link
+              href="/platforms"
             className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors"
           >
             Platforms
@@ -104,7 +111,14 @@ export default function Header() {
               Categories
             </Link>
             <Link
-              href="/ports"\r\n              onClick={() => setMobileMenuOpen(false)}\r\n            >\r\n              <Monitor className="h-4 w-4" />\r\n              Ports\r\n            </Link>\r\n            <Link\r\n              href="/platforms"
+              href="/ports"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              <Monitor className="h-4 w-4" />
+              Ports
+            </Link>
+            <Link
+              href="/platforms"
               className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm hover:bg-card transition-colors"
               onClick={() => setMobileMenuOpen(false)}
             >
